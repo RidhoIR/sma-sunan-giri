@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class WaliSiswa extends Model
+class Pembayaran extends Model
 {
     protected $guarded = ['id'];
 
-    public function siswa()
+    public function tagihan()
     {
-        return $this->belongsTo(Siswa::class);
+        return $this->belongsTo(Tagihan::class);
     }
 
     public function wali()
@@ -20,6 +20,6 @@ class WaliSiswa extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class);
     }
 }

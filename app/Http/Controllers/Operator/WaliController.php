@@ -7,6 +7,7 @@ use App\Models\Siswa;
 use App\Models\User;
 use App\Models\WaliSiswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 
@@ -47,18 +48,21 @@ class WaliController extends Controller
         }
     }
 
-    public function storeWaliSiswa(Request $request, string $id) {
+    public function storeWaliSiswa(Request $request, string $id)
+    {
         try {
             $validated = $request->validate([
                 'siswa_id' => ['required', 'exists:siswas,id'],
             ]);
 
             $wali_id = User::findorfail($id);
+            $user_id = Auth::user()->id;
 
             WaliSiswa::create([
                 'siswa_id' => $validated['siswa_id'],
                 'wali_id' => $wali_id->id,
                 'status' => 'ok',
+                'user_id' => $user_id,
             ]);
 
             return redirect()->back()->with('success', 'Siswa(Anak) berhasil ditambahkan.');
@@ -66,6 +70,17 @@ class WaliController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    public function destroyWaliSiswa(string $id)
+    {
+        try {
+            WaliSiswa::where('id', $id)->delete();
+            return redirect()->back()->with('success', 'Siswa(Anak) berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    
     public function update(Request $request, string $id)
     {
         try {
@@ -109,12 +124,13 @@ class WaliController extends Controller
         try {
             $user = User::findOrFail($id);
 
-            $siswaDimiliki = WaliSiswa::where('wali_id', $user->id)
-                ->pluck('siswa_id');
+            // Ambil semua siswa_id yang sudah punya wali siapapun
+            $siswaSudahPunyaWali = WaliSiswa::pluck('siswa_id');
 
-            $siswaBelumDimiliki = Siswa::whereNotIn('id', $siswaDimiliki)->get();
+            // Ambil siswa yang belum punya wali sama sekali
+            $siswaBelumDimiliki = Siswa::whereNotIn('id', $siswaSudahPunyaWali)->get();
 
-            $wali_siswa = WaliSiswa::with(['siswa', 'wali'])->where('wali_id', $user->id)->get();
+            $wali_siswa = WaliSiswa::with(['siswa', 'wali', 'user'])->where('wali_id', $user->id)->get();
             return Inertia::render('operator/wali/detail', [
                 'wali_siswa' => $wali_siswa,
                 'wali' => $user,

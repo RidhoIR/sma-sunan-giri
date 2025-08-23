@@ -28,12 +28,22 @@ interface Props {
 
 const Edit = ({ siswa }: Props) => {
     const [open, setOpen] = useState(false);
-    const { put, data, setData, processing, errors, } = useForm({
+
+    // Ikuti pattern yang sama dengan Anggaran - gunakan destructuring yang sama
+    const { data, setData, post, errors, processing } = useForm<{
+        nama: string;
+        nisn: string;
+        kelas: string;
+        jurusan: string;
+        angkatan: string;
+        foto: File | null;
+    }>({
         nama: siswa.nama,
         nisn: siswa.nisn,
         kelas: siswa.kelas,
         jurusan: siswa.jurusan,
         angkatan: siswa.angkatan,
+        foto: null,
     });
 
     useEffect(() => {
@@ -43,19 +53,23 @@ const Edit = ({ siswa }: Props) => {
             kelas: siswa.kelas,
             jurusan: siswa.jurusan,
             angkatan: siswa.angkatan,
+            foto: null,
         });
     }, [siswa, setData]);
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(route("admin.siswa.update", siswa.id), {
+
+        post(route("admin.siswa.update", siswa.id), {
+            forceFormData: true,
             onSuccess: () => setOpen(false),
+            onError: (errors) => console.log("Form submission errors:", errors),
+            preserveScroll: true,
         });
     };
 
     return (
         <div>
-            {/* Dialog and form for editing siswa */}
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button variant={"blue"}>
@@ -72,9 +86,9 @@ const Edit = ({ siswa }: Props) => {
                     <form onSubmit={submit}>
                         <div className="space-y-4">
                             <div>
-                                <Label htmlFor="sheet-demo-nama">Nama</Label>
+                                <Label htmlFor="nama">Nama</Label>
                                 <Input
-                                    id="sheet-demo-nama"
+                                    id="nama"
                                     value={data.nama}
                                     onChange={(e) => setData('nama', e.target.value)}
                                     required
@@ -82,9 +96,9 @@ const Edit = ({ siswa }: Props) => {
                                 {errors.nama && <p className="text-red-500">{errors.nama}</p>}
                             </div>
                             <div>
-                                <Label htmlFor="sheet-demo-nisn">NISN</Label>
+                                <Label htmlFor="nisn">NISN</Label>
                                 <Input
-                                    id="sheet-demo-nisn"
+                                    id="nisn"
                                     value={data.nisn}
                                     onChange={(e) => setData('nisn', e.target.value)}
                                     required
@@ -125,15 +139,32 @@ const Edit = ({ siswa }: Props) => {
                                 {errors.kelas && <p className="text-red-600">{errors.kelas}</p>}
                             </div>
                             <div>
-                                <Label htmlFor="sheet-demo-angkatan">Angkatan</Label>
+                                <Label htmlFor="angkatan">Angkatan</Label>
                                 <Input
-                                    id="sheet-demo-angkatan"
-                                    type="angkatan"
+                                    id="angkatan"
                                     value={data.angkatan}
                                     onChange={(e) => setData('angkatan', e.target.value)}
                                     required
                                 />
                                 {errors.angkatan && <p className="text-red-500">{errors.angkatan}</p>}
+                            </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor="foto">Foto</Label>
+                                <Input
+                                    id="foto"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={(e) => setData("foto", e.target.files?.[0] || null)}
+                                />
+                                {errors.foto && <p className="text-red-500">{errors.foto}</p>}
+                                {/* Tampilkan foto lama */}
+                                {siswa.foto && (
+                                    <img
+                                        src={`/storage/${siswa.foto}`}
+                                        alt="Foto lama"
+                                        className="mt-2 h-16 rounded"
+                                    />
+                                )}
                             </div>
                             <DialogFooter>
                                 <Button type="submit" disabled={processing}>
@@ -143,7 +174,7 @@ const Edit = ({ siswa }: Props) => {
                                             Menyimpan...
                                         </>
                                     ) : (
-                                        'Save Change'
+                                        'Save Changes'
                                     )}
                                 </Button>
                                 <Button type="button" onClick={() => setOpen(false)}>Cancel</Button>

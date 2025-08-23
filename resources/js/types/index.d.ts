@@ -35,6 +35,10 @@ export interface SharedData {
     }
     siswas: Siswa[];
     wali_siswas: WaliSiswa[];
+    tagihans: Tagihan[];
+    tagihan_details: DetailTagihan[];
+    biayas: Biaya[];
+    pembayarans: Pembayaran[];
 }
 
 export interface User {
@@ -57,12 +61,51 @@ export interface Siswa {
     jurusan: string;
     kelas: string;
     angkatan: string;
+    foto: string;
 }
 
 export interface WaliSiswa {
     id: number;
     siswa: Siswa;
     wali: User;
+    user: User;
+}
+
+export interface Biaya{
+    id: number;
+    nama: string;
+    jumlah: number;
+    user: User;
+}
+
+export interface Tagihan{
+    id: number;
+    user: User;
+    siswa: Siswa;
+    angkatan: string;
+    kelas: string;
+    tanggal_tagihan: string;
+    tanggal_jatuh_tempo: string;
+    keterangan: string;
+    denda: number;
+    status: string;
+}
+
+export interface DetailTagihan{
+    tagihan: Tagihan;
+    nama_biaya: string;
+    jumlah_biaya: number;
+}
+
+export interface Pembayaran{
+    id: number;
+    tagihan: Tagihan;
+    user: User;
+    jumlah_dibayar: number;
+    metode_pembayaran: string;
+    bukti_pembayaran: string;
+    status_konfirmasi: string;
+    tanggal_pembayaran: string;
 }
 
 

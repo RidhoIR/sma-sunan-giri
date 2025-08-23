@@ -54,4 +54,24 @@ class User extends Authenticatable
     {
         return $this->hasMany(WaliSiswa::class, 'wali_id');
     }
+
+    public function waliUsers()
+    {
+        return $this->hasMany(WaliSiswa::class, 'user_id');
+    }
+
+    public function biayas()
+    {
+        return $this->hasMany(Biaya::class);
+    }
+
+    public function tagihans()
+    {
+        return $this->hasMany(Tagihan::class);
+    }
+
+    public function pembayarans()
+    {
+        return $this->hasMany(Pembayaran::class);
+    }
 }

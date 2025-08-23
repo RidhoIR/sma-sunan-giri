@@ -1,5 +1,5 @@
 import { BreadcrumbItem, Siswa, User, WaliSiswa } from '@/types'
-import React from 'react'
+import React, { useState } from 'react'
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm, } from '@inertiajs/react';
 import { Card } from '@/components/ui/card';
@@ -11,7 +11,17 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { GraduationCap, Loader2, UserIcon, UserPlus } from 'lucide-react';
+import {
+    Dialog,
+    DialogClose,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { GraduationCap, Loader2, Trash, UserIcon, UserPlus } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { CommandCombobox } from '@/components/combobox-command';
 import { Button } from '@/components/ui/button';
@@ -29,10 +39,15 @@ interface Props {
     siswa_belum_dimiliki: Siswa[];
 }
 const Detail = ({ wali, wali_siswa, siswa_belum_dimiliki }: Props) => {
-    const { data, setData, post, processing } = useForm({
+    const [open, setOpen] = useState(false);
+
+    const { data, setData, post, processing, } = useForm({
         siswa_id: '',
         wali_id: '',
     });
+
+    const { delete: destroy, processing: processingDelete } = useForm({});
+
 
     const optionSiswa = siswa_belum_dimiliki.map((item) => ({
         label: item.nisn + ' - ' + item.nama,
@@ -43,6 +58,15 @@ const Detail = ({ wali, wali_siswa, siswa_belum_dimiliki }: Props) => {
         e.preventDefault();
         post(route("admin.wali.storeWaliSiswa", wali.id))
     };
+
+    const destroyWaliSiswa = (id: number) => {
+        destroy(route("admin.wali.destroyWaliSiswa", id), {
+            onSuccess: () => {
+                setOpen(false);
+            }
+
+        });
+    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -105,6 +129,8 @@ const Detail = ({ wali, wali_siswa, siswa_belum_dimiliki }: Props) => {
                                     <TableHead className="font-semibold text-gray-700">No</TableHead>
                                     <TableHead className="font-semibold text-gray-700">NISN</TableHead>
                                     <TableHead className="font-semibold text-gray-700">Nama</TableHead>
+                                    <TableHead className="font-semibold text-gray-700">Updated_by</TableHead>
+                                    <TableHead className="font-semibold text-gray-700">Action</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -118,12 +144,41 @@ const Detail = ({ wali, wali_siswa, siswa_belum_dimiliki }: Props) => {
                                             <TableCell className="text-gray-900">
                                                 {item.siswa.nama}
                                             </TableCell>
+                                            <TableCell className="text-gray-900">
+                                                {item.user.name}
+                                            </TableCell>
+                                            <TableCell className="text-gray-900">
+                                                <Dialog open={open} onOpenChange={setOpen}>
+                                                    <DialogTrigger asChild>
+                                                        <Button variant="destructive">
+                                                            <Trash />
+                                                        </Button>
+                                                    </DialogTrigger>
+                                                    <DialogContent>
+                                                        <DialogHeader>
+                                                            <DialogTitle>Confirm</DialogTitle>
+                                                            <DialogDescription>
+                                                                Are you sure you want to delete it permanently? <span className='text-red-500'>{item.siswa.nama}</span>
+                                                            </DialogDescription>
+                                                        </DialogHeader>
+                                                        <DialogFooter>
+                                                            <DialogClose asChild>
+                                                                <Button variant="outline">Cancel</Button>
+                                                            </DialogClose>
+                                                            <Button type='submit' variant={'destructive'} onClick={() => destroyWaliSiswa(item.id)} disabled={processingDelete}>
+                                                                {processingDelete && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                                                Continue
+                                                            </Button>
+                                                        </DialogFooter>
+                                                    </DialogContent>
+                                                </Dialog>
+                                            </TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={3} className="text-center text-gray-500 py-4">
-                                            Belum ada Pembayaran
+                                        <TableCell colSpan={4} className="text-center text-gray-500 py-4">
+                                            Belum ada Data Anak
                                         </TableCell>
                                     </TableRow>
                                 )}

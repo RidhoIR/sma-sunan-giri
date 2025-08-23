@@ -11,11 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('wali_siswas', function (Blueprint $table) {
+        Schema::create('tagihans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('siswa_id')->constrained()->onDelete('cascade');
-            $table->foreignId('wali_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('siswa_id')->constrained('siswas')->onDelete('cascade');
+            $table->integer('angkatan')->nullable();
+            $table->string('kelas')->nullable();
+            $table->date('tanggal_tagihan');
+            $table->date('tanggal_jatuh_tempo');
+            $table->string('keterangan')->nullable();
+            $table->bigInteger('denda')->nullable();
             $table->string('status');
             $table->timestamps();
         });
@@ -26,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('wali_siswas');
+        Schema::dropIfExists('tagihans');
     }
 };

@@ -43,12 +43,20 @@ interface Props {
 const Index = ({ siswa }: Props) => {
 
     const [open, setOpen] = useState(false);
-    const { data, setData, post, errors, processing } = useForm({
-        nama: '',
-        nisn: '',
-        jurusan: '',
-        kelas: '',
-        angkatan: '',
+    const { data, setData, post, errors, processing } = useForm<{
+        nama: string;
+        nisn: string;
+        jurusan: string;
+        kelas: string;
+        angkatan: string;
+        foto: File | null;
+    }>({
+        nama: "",
+        nisn: "",
+        jurusan: "",
+        kelas: "",
+        angkatan: "",
+        foto: null,
     });
 
     const submit = (e: React.FormEvent) => {
@@ -62,7 +70,7 @@ const Index = ({ siswa }: Props) => {
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title='Data Wali Murid' />
+            <Head title='Data Siswa' />
             <div className='flex justify-between items-center mb-4'>
                 <div>
                     <h1 className='text-2xl font-bold'>Data Siswa</h1>
@@ -138,12 +146,20 @@ const Index = ({ siswa }: Props) => {
                                     <Label htmlFor="sheet-demo-angkatan">Angkatan</Label>
                                     <Input
                                         id="sheet-demo-angkatan"
-                                        type="angkatan"
                                         value={data.angkatan}
                                         onChange={(e) => setData('angkatan', e.target.value)}
                                         required
                                     />
                                     {errors.angkatan && <p className="text-red-500">{errors.angkatan}</p>}
+                                </div>
+                                <div className='grid gap-3'>
+                                    <Label htmlFor='sheet-demo-foto'>Foto</Label>
+                                    <Input
+                                        id="sheet-demo-foto"
+                                        type="file"
+                                        onChange={(e) => setData("foto", e.target.files?.[0] ?? null)}
+                                        // required
+                                    />
                                 </div>
                             </div>
                             <SheetFooter>

@@ -48,7 +48,6 @@ const Edit = ({ wali }: Props) => {
 
     return (
         <div>
-            {/* Dialog and form for editing wali */}
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogTrigger asChild>
                     <Button variant={"blue"}>
@@ -113,6 +112,7 @@ const Edit = ({ wali }: Props) => {
                                 {errors.password_confirmation && <p className="text-red-600">{errors.password_confirmation}</p>}
                             </div>
                             <DialogFooter>
+                                
                                 <Button type="submit" disabled={processing}>
                                     {processing ? (
                                         <>

@@ -1,7 +1,10 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\Operator\BiayaController;
+use App\Http\Controllers\Operator\PembayaranController;
 use App\Http\Controllers\Operator\SiswaController;
+use App\Http\Controllers\Operator\TagihanController;
 use App\Http\Controllers\Operator\UserController;
 use App\Http\Controllers\Operator\WaliController;
 use App\Http\Controllers\WaliDashboardController;
@@ -35,13 +38,38 @@ Route::middleware(['auth', 'akses:admin'])->name('admin.')->group(function () {
         Route::delete('/{id}', [WaliController::class, 'destroy'])->name('destroy');
         Route::get('/detail/{id}', [WaliController::class, 'show'])->name('show');
         Route::post('/wali/{id}/siswa', [WaliController::class, 'storeWaliSiswa'])->name('storeWaliSiswa');
+        Route::delete('/wali/{id}/siswa', [WaliController::class, 'destroyWaliSiswa'])->name('destroyWaliSiswa');
     });
 
     Route::prefix('/admin/siswa')->name('siswa.')->group(function () {
         Route::get('/', [SiswaController::class, 'index'])->name('index');
         Route::post('/', [SiswaController::class, 'store'])->name('store');
-        Route::put('/{id}', [SiswaController::class, 'update'])->name('update');
+        Route::post('/{id}', [SiswaController::class, 'update'])->name('update');
         Route::delete('/{id}', [SiswaController::class, 'destroy'])->name('destroy');
+        Route::get('/detail/{id}', [SiswaController::class, 'show'])->name('show');
+    });
+
+    Route::prefix('/admin/biaya')->name('biaya.')->group(function () {
+        Route::get('/', [BiayaController::class, 'index'])->name('index');
+        Route::post('/', [BiayaController::class, 'store'])->name('store');
+        Route::put('/{id}', [BiayaController::class, 'update'])->name('update');
+        Route::delete('/{id}', [BiayaController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('/admin/tagihan')->name('tagihan.')->group(function () {
+        Route::get('/', [TagihanController::class, 'index'])->name('index');
+        Route::post('/', [TagihanController::class, 'store'])->name('store');
+        Route::put('/{id}', [TagihanController::class, 'update'])->name('update');
+        Route::delete('/{id}', [TagihanController::class, 'destroy'])->name('destroy');
+        Route::get('/detail/{id}', [TagihanController::class, 'show'])->name('show');
+    });
+
+    Route::prefix('admin/pembayaran')->name('pembayaran.')->group(function () {
+        Route::get('/', [PembayaranController::class, 'index'])->name('index');
+        Route::post('/', [PembayaranController::class, 'store'])->name('store');
+        Route::put('/{id}', [PembayaranController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PembayaranController::class, 'destroy'])->name('destroy');
+        Route::get('/detail/{id}', [PembayaranController::class, 'show'])->name('show');
     });
     // route lain untuk operator
 });

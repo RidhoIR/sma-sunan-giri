@@ -2,7 +2,11 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Biaya;
+use App\Models\Pembayaran;
 use App\Models\Siswa;
+use App\Models\Tagihan;
+use App\Models\TagihanDetail;
 use App\Models\WaliSiswa;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
@@ -59,6 +63,10 @@ class HandleInertiaRequests extends Middleware
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'siswas' => Siswa::all(),
             'wali_siswas' => WaliSiswa::all(),
+            'biayas' => Biaya::all(),
+            'tagihans' => Tagihan::all(),
+            'tagihan_details' => TagihanDetail::all(),
+            'pembayarans' => Pembayaran::all(),
         ];
     }
 }

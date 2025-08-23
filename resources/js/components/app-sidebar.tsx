@@ -28,6 +28,16 @@ const mainNavItems: NavItem[] = [
         href: '/admin/siswa',
         icon: LayoutGrid,
     },
+    {
+        title: 'Data Biaya',
+        href: '/admin/biaya',
+        icon: LayoutGrid
+    },
+    {
+        title: 'Data Tagihan',
+        href: '/admin/tagihan',
+        icon: LayoutGrid
+    }
 ];
 
 const footerNavItems: NavItem[] = [
