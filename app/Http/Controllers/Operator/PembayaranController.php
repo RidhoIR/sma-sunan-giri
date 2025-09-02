@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Operator;
 use App\Http\Controllers\Controller;
 use App\Models\Pembayaran;
 use App\Models\Tagihan;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -61,6 +62,18 @@ class PembayaranController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+
+    public function cetakInvoice($id)
+    {
+        $pembayaran = Pembayaran::with(['tagihan.siswa'])->findOrFail($id);
+
+        $pdf = Pdf::loadView('invoice-pembayaran', compact('pembayaran'))
+            ->setPaper('A5', 'portrait'); // ukuran A5 seperti kwitansi
+
+        return $pdf->stream('kwitansi-' . $pembayaran->id . '.pdf');
+    }
+
+    
 
     /**
      * Display the specified resource.

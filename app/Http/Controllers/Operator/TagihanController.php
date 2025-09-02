@@ -10,6 +10,7 @@ use App\Models\Siswa;
 use App\Models\Biaya;
 use App\Models\Pembayaran;
 use App\Models\TagihanDetail;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -18,12 +19,21 @@ class TagihanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $tagihan = Tagihan::with('siswa', 'user')->get();
+        if ($request->filled('bulan') && $request->filled('tahun')) {
+            $tagihan = Tagihan::with('siswa', 'user')
+                ->whereMonth('tanggal_tagihan', $request->bulan)
+                ->whereYear('tanggal_tagihan', $request->tahun)->get();
+        } else {
+            $tagihan = Tagihan::with('siswa', 'user')->get();
+        }
+
+        $biaya = Biaya::get();
 
         return Inertia::render('operator/tagihan/index', [
-            'tagihan' => $tagihan
+            'tagihan' => $tagihan,
+            'biaya' => $biaya
         ]);
     }
 
@@ -108,6 +118,26 @@ class TagihanController extends Controller
             'tagihan_detail'  => $tagihan_detail,
             'pembayaran' => $pembayaran
         ]);
+    }
+
+    public function cetakSPP(Request $request, $id)
+    {
+        $tagihan = Tagihan::with(['details', 'siswa'])
+            ->where('siswa_id', $id)
+            ->whereYear('tanggal_tagihan', $request->tahun)
+            ->get();
+
+        if ($tagihan->isEmpty()) {
+            return back()->with('error', 'Tidak ada tagihan untuk siswa ini pada tahun yang dipilih.');
+        }
+
+        // Ambil data siswa dari salah satu tagihan (semua sama)
+        $siswa = $tagihan->first()->siswa;
+
+        $pdf = Pdf::loadView('kartu-spp', compact('tagihan', 'siswa'))
+            ->setPaper('A5', 'portrait'); // ukuran A5 seperti kwitansi
+
+        return $pdf->stream('kwitansi-' . $siswa->id . '.pdf');
     }
 
     /**

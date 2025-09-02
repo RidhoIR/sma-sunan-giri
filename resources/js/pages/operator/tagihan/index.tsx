@@ -1,9 +1,9 @@
 import { DataTable } from '@/components/DataTable';
-import { BreadcrumbItem, SharedData, Tagihan } from '@/types'
+import { Biaya, BreadcrumbItem, SharedData, Tagihan } from '@/types'
 import React, { useState } from 'react'
 import { column } from './column';
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -23,6 +23,7 @@ import { MultiSelect, type Option } from "@/components/multi-select"
 import { Label } from "@/components/ui/label"
 import { Textarea } from '@/components/ui/textarea';
 import { DatePicker } from '@/components/date-picker';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
 
@@ -36,23 +37,57 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
     tagihan: Tagihan[];
+    filters?: {
+        bulan?: string;
+        tahun?: string;
+    }
+    biaya: Biaya[];
 }
 
 
 
-const Index = ({ tagihan }: Props) => {
+const Index = ({ tagihan, filters, biaya }: Props) => {
 
-    const { biayas } = usePage<SharedData>().props;
+    // const { biayas } = usePage<SharedData>().props;
     const [open, setOpen] = useState(false);
-
-    // const [openDatePicker, setOpenDatePicker] = useState(false);
+    const [bulan, setBulan] = useState(filters?.bulan || "");
+    const [tahun, setTahun] = useState(filters?.tahun || "");
     const [dateTagihan, setDateTagihan] = useState<Date | null>(null); // untuk menyimpan tanggal
+    const bulanOptions = [
+        { value: "1", label: "Januari" },
+        { value: "2", label: "Februari" },
+        { value: "3", label: "Maret" },
+        { value: "4", label: "April" },
+        { value: "5", label: "Mei" },
+        { value: "6", label: "Juni" },
+        { value: "7", label: "Juli" },
+        { value: "8", label: "Agustus" },
+        { value: "9", label: "September" },
+        { value: "10", label: "Oktober" },
+        { value: "11", label: "November" },
+        { value: "12", label: "Desember" },
+    ];
+
     const handleDateTagihanChange = (date: Date | null) => {
         setDateTagihan(date);
         setData('tanggal_tagihan', date ? date.toISOString().split('T')[0] : '');
     }
+    const handleFilter = () => {
+        router.get(route("admin.tagihan.index"), { bulan, tahun }, { preserveState: true });
+    };
 
-    // const [openDateTempo, setOpenDateTempo] = useState(false);
+    const handleReset = () => {
+        setBulan("");
+        setTahun("");
+        router.get(route("admin.tagihan.index"), {}, { preserveState: true });
+    };
+
+    const tahunOptions = Array.from({ length: 5 }, (_, i) => {
+        const year = new Date().getFullYear() - i;
+        return { value: String(year), label: String(year) };
+    });
+
+
     const [dateTempo, setDateTempo] = useState<Date | null>(null);
     const handleDateTempoChange = (date: Date | null) => {
         setDateTempo(date);
@@ -78,7 +113,7 @@ const Index = ({ tagihan }: Props) => {
 
     };
 
-    const BiayaList: Option[] = biayas.map((biaya) => ({
+    const BiayaList: Option[] = biaya.map((biaya) => ({
         value: String(biaya.id), // value harus string
         label: `${biaya.nama} - ${formatRupiah(biaya.jumlah)}`, // tampilkan nama + harga
     }));
@@ -98,6 +133,44 @@ const Index = ({ tagihan }: Props) => {
                     <h1 className='text-2xl font-bold'>Data Tagihan</h1>
                     <h2 className='text-sm text-muted-foreground'>Kelola Data Tagihan</h2>
                 </div>
+                <Card className="p-4">
+                    <div className="flex gap-4 items-end">
+                        <div className="grid gap-2">
+                            <Label>Bulan</Label>
+                            <Select value={bulan} onValueChange={setBulan}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Pilih Bulan" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {bulanOptions.map((b) => (
+                                        <SelectItem key={b.value} value={b.value}>
+                                            {b.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label>Tahun</Label>
+                            <Select value={tahun} onValueChange={setTahun}>
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Pilih Tahun" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {tahunOptions.map((t) => (
+                                        <SelectItem key={t.value} value={t.value}>
+                                            {t.label}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <Button onClick={handleFilter}>Filter</Button>
+                        <Button variant={'blue'} onClick={handleReset}>Reset</Button>
+                    </div>
+                </Card>
                 <Sheet open={open} onOpenChange={setOpen}>
                     <SheetTrigger asChild>
                         <Button className='hover:cursor-pointer' variant="default">+ Tambah Data</Button>
@@ -170,7 +243,7 @@ const Index = ({ tagihan }: Props) => {
                 </Sheet>
             </div>
             <Card className='p-4'>
-                <DataTable data={tagihan} columns={column} />
+                <DataTable data={tagihan} columns={column(tahun)} />
             </Card>
         </AppLayout >
     )

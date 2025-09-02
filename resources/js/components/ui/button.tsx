@@ -23,6 +23,7 @@ const buttonVariants = cva(
         green: "bg-green-600 text-white shadow-xs hover:bg-green-700",
         red: "bg-red-600 text-white shadow-xs hover:bg-red-700",
         yellow: "bg-yellow-600 text-white shadow-xs hover:bg-yellow-700",
+        fucshia: "bg-fuchsia-600 text-white shadow-xs hover:bg-fuchsia-700",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

@@ -46,7 +46,7 @@ class BiayaController extends Controller
                 'user_id' => Auth::user()->id,
             ]);
 
-            return redirect()->back()->with('success', 'Biaya berhasil disimpan.');
+            return redirect()->route('admin.biaya.index')->with('success', 'Biaya berhasil disimpan.');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

@@ -62,6 +62,7 @@ Route::middleware(['auth', 'akses:admin'])->name('admin.')->group(function () {
         Route::put('/{id}', [TagihanController::class, 'update'])->name('update');
         Route::delete('/{id}', [TagihanController::class, 'destroy'])->name('destroy');
         Route::get('/detail/{id}', [TagihanController::class, 'show'])->name('show');
+        Route::get('/cetak-spp/{id}', [TagihanController::class, 'cetakSPP'])->name('cetakSPP');
     });
 
     Route::prefix('admin/pembayaran')->name('pembayaran.')->group(function () {
@@ -70,6 +71,7 @@ Route::middleware(['auth', 'akses:admin'])->name('admin.')->group(function () {
         Route::put('/{id}', [PembayaranController::class, 'update'])->name('update');
         Route::delete('/{id}', [PembayaranController::class, 'destroy'])->name('destroy');
         Route::get('/detail/{id}', [PembayaranController::class, 'show'])->name('show');
+        Route::get('/cetak-invoice/{id}', [PembayaranController::class, 'cetakInvoice'])->name('cetakInvoice');
     });
     // route lain untuk operator
 });
