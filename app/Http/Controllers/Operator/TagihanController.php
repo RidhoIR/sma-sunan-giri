@@ -70,18 +70,20 @@ class TagihanController extends Controller
                 // Ambil semua biaya yang dipilih
                 $biayas = Biaya::whereIn('id', $request->biaya_id)->get();
 
+                // Ambil tahun ajaran sesuai biaya yang dipilih
+                $biaya_tahun_ajaran = $biayas->first()->tahun_ajaran;
+
                 foreach ($siswas as $siswa) {
                     // 1️⃣ Buat tagihan untuk siswa ini
                     $tagihan = Tagihan::create([
                         'user_id' => Auth::user()->id, // atau sesuai kebutuhan
                         'siswa_id' => $siswa->id,
-                        'angkatan' => $request->angkatan ?? $siswa->angkatan ?? null,
-                        'kelas' => $request->kelas ?? $siswa->kelas ?? null,
+                        'tahun_ajaran' => $biaya_tahun_ajaran,
                         'tanggal_tagihan' => $request->tanggal_tagihan,
                         'tanggal_jatuh_tempo' => $request->tanggal_jatuh_tempo,
                         'keterangan' => $request->keterangan ?? null,
                         'denda' => null,
-                        'status' => 'ok',
+                        'status' => 'baru',
                     ]);
 
                     // 2️⃣ Buat detail tagihan dari biaya yang dipilih

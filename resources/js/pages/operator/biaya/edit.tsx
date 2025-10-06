@@ -24,12 +24,14 @@ const Edit = ({ biaya }: Props) => {
     const { put, data, setData, processing, errors, } = useForm({
         nama: biaya.nama,
         jumlah: biaya.jumlah.toString(),
+        tahun_ajaran: biaya.tahun_ajaran,
     });
 
     useEffect(() => {
         setData({
             nama: biaya.nama,
             jumlah: biaya.jumlah.toString(),
+            tahun_ajaran: biaya.tahun_ajaran,
         });
     }, [biaya, setData]);
 
@@ -87,6 +89,16 @@ const Edit = ({ biaya }: Props) => {
                                     required
                                 />
                                 {errors.nama && <p className="text-red-500">{errors.nama}</p>}
+                            </div>
+                            <div className="grid gap-3">
+                                <Label htmlFor="sheet-demo-tahun_ajaran">Tahun Ajaran</Label>
+                                <Input
+                                    id="sheet-demo-tahun_ajaran"
+                                    value={data.tahun_ajaran}
+                                    onChange={(e) => setData('tahun_ajaran', e.target.value)}
+                                    required
+                                />
+                                {errors.tahun_ajaran && <p className="text-red-500">{errors.tahun_ajaran}</p>}
                             </div>
                             <div className="grid gap-3">
                                 <Label htmlFor="jumlah">Jumlah<span className='text-red-600'>*</span></Label>

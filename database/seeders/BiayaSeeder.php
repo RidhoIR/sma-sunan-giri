@@ -17,6 +17,7 @@ class BiayaSeeder extends Seeder
             [
                 'nama' => 'SPP Bulanan',
                 'jumlah' => 250000,
+                'tahun_ajaran' => '2023/2024',
                 'user_id' => 1,
             ],
         ];

@@ -25,6 +25,11 @@ export function formatTanggalIndonesiaLengkap(dateString: string) {
     return format(date, "dd MMMM yyyy", { locale: id });
 }
 
+export function formatTanggalIndonesiaJam(dateString: string) {
+    const date = new Date(dateString);
+    return format(date, "dd MMMM yyyy HH:mm", { locale: id });
+}
+
 export function InputformatRupiah(value: string) {
     const numberString = value.replace(/[^,\d]/g, '').toString();
     const split = numberString.split(',');

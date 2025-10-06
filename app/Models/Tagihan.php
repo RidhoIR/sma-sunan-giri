@@ -8,6 +8,11 @@ class Tagihan extends Model
 {
     protected $guarded = ['id'];
 
+
+    public function latestPembayaran()
+    {
+        return $this->hasOne(Pembayaran::class)->latestOfMany('tanggal_pembayaran');
+    }
     public function siswa()
     {
         return $this->belongsTo(Siswa::class, 'siswa_id');

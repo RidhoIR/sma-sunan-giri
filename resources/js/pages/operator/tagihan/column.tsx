@@ -27,19 +27,19 @@ export const column = (tahun: string | number): ColumnDef<Tagihan>[] => [
         ),
     },
     {
-        accessorKey: "angkatan",
+        accessorKey: "siswa.jurusan",
         header: ({ column }) => {
             return (
                 <Button
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Angkatan
+                    jurusan
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
         },
-        cell: ({ row }) => <div className="lowercase">{row.getValue("angkatan")}</div>,
+        cell: ({ row }) => <div className="uppercase">{row.original.siswa.jurusan}</div>,
     },
     {
         accessorKey: "tanggal_tagihan",
@@ -62,6 +62,27 @@ export const column = (tahun: string | number): ColumnDef<Tagihan>[] => [
         cell: ({ row }) => (
             <div className="capitalize">{row.getValue("kelas")}</div>
         ),
+    },
+    {
+        accessorKey: "status",
+        header: "Status Pembayaran",
+        cell: ({ row }) => {
+            const status = row.original.status; // value dari database
+
+            // mapping value
+            const statusLabel: Record<string, string> = {
+                baru: "Belum dibayar",
+                lunas: "Sudah dibayar",
+                angsur: "Belum lunas",
+            };
+
+            return (
+                <div className="capitalize">
+                    {statusLabel[status] ?? status}
+                    {/* kalau value tak dikenal, tampilkan aslinya */}
+                </div>
+            );
+        },
     },
     {
         id: "actions",

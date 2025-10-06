@@ -38,11 +38,13 @@ class BiayaController extends Controller
             $validated = $request->validate([
                 'nama' => 'required|string|max:255',
                 'jumlah' => 'required|numeric',
+                'tahun_ajaran' => 'required|string',
             ]);
 
             Biaya::create([
                 'nama' => $validated['nama'],
                 'jumlah' => $validated['jumlah'],
+                'tahun_ajaran' => $validated['tahun_ajaran'],
                 'user_id' => Auth::user()->id,
             ]);
 
@@ -58,11 +60,13 @@ class BiayaController extends Controller
             $validated = $request->validate([
                 'nama' => 'required|string|max:255',
                 'jumlah' => 'required|numeric',
+                'tahun_ajaran' => 'required|string',
             ]);
 
             Biaya::where('id', $id)->update([
                 'nama' => $validated['nama'],
                 'jumlah' => $validated['jumlah'],
+                'tahun_ajaran' => $validated['tahun_ajaran'],
                 'user_id' => Auth::user()->id,
             ]);
 

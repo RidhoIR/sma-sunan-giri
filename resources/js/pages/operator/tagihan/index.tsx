@@ -1,9 +1,9 @@
 import { DataTable } from '@/components/DataTable';
-import { Biaya, BreadcrumbItem, SharedData, Tagihan } from '@/types'
+import { Biaya, BreadcrumbItem, Tagihan } from '@/types'
 import React, { useState } from 'react'
 import { column } from './column';
 import AppLayout from '@/layouts/app-layout';
-import { Head, router, useForm, usePage } from '@inertiajs/react';
+import { Head, router, useForm, } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import {
@@ -115,7 +115,7 @@ const Index = ({ tagihan, filters, biaya }: Props) => {
 
     const BiayaList: Option[] = biaya.map((biaya) => ({
         value: String(biaya.id), // value harus string
-        label: `${biaya.nama} - ${formatRupiah(biaya.jumlah)}`, // tampilkan nama + harga
+        label: `(${biaya.tahun_ajaran}) ${biaya.nama} - ${formatRupiah(biaya.jumlah)}`, // tampilkan nama + harga
     }));
 
     const [selectedBiaya, setSelectedBiaya] = useState<string[]>([]);

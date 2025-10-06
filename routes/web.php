@@ -1,13 +1,19 @@
 <?php
 
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\Operator\BankSekolahController;
 use App\Http\Controllers\Operator\BiayaController;
 use App\Http\Controllers\Operator\PembayaranController;
 use App\Http\Controllers\Operator\SiswaController;
 use App\Http\Controllers\Operator\TagihanController;
 use App\Http\Controllers\Operator\UserController;
 use App\Http\Controllers\Operator\WaliController;
+use App\Http\Controllers\Wali\SiswaController as WaliSiswaController;
+use App\Http\Controllers\Wali\WaliPembayaranController;
+use App\Http\Controllers\Wali\WaliTagihanController;
+
 use App\Http\Controllers\WaliDashboardController;
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -20,6 +26,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return Inertia::render('dashboard');
     })->name('dashboard');
 });
+
 
 Route::middleware(['auth', 'akses:admin'])->name('admin.')->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
@@ -70,14 +77,39 @@ Route::middleware(['auth', 'akses:admin'])->name('admin.')->group(function () {
         Route::post('/', [PembayaranController::class, 'store'])->name('store');
         Route::put('/{id}', [PembayaranController::class, 'update'])->name('update');
         Route::delete('/{id}', [PembayaranController::class, 'destroy'])->name('destroy');
-        Route::get('/detail/{id}', [PembayaranController::class, 'show'])->name('show');
+        Route::get('/detail/{pembayaran}', [PembayaranController::class, 'detail'])->name('detail');
         Route::get('/cetak-invoice/{id}', [PembayaranController::class, 'cetakInvoice'])->name('cetakInvoice');
+        Route::put('/konfirmasi/{pembayaran}', [PembayaranController::class, 'konfirmasi'])->name('konfirmasi');
+    });
+
+    Route::prefix('/admin/rekening')->name('rekening.')->group(function () {
+        Route::get('/', [BankSekolahController::class, 'index'])->name('index');
+        Route::post('/', [BankSekolahController::class, 'store'])->name('store');
+        Route::put('/{id}', [BankSekolahController::class, 'update'])->name('update');
+        Route::delete('/{id}', [BankSekolahController::class, 'destroy'])->name('destroy');
     });
     // route lain untuk operator
 });
 
+//ROLE WALI
 Route::middleware(['auth', 'akses:wali'])->name('wali.')->group(function () {
     Route::get('/wali/dashboard', [WaliDashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('/wali/siswa')->name('siswa.')->group(function () {
+        Route::get('/', [WaliSiswaController::class, 'index'])->name('index');
+    });
+
+    Route::prefix('/wali/tagihan')->name('tagihan.')->group(function () {
+        Route::get('/', [WaliTagihanController::class, 'index'])->name('index');
+        Route::get('/detail/{id}', [WaliTagihanController::class, 'show'])->name('show');
+    });
+
+    Route::prefix('/wali/pembayaran')->name('pembayaran.')->group(function () {
+        Route::get('/', [WaliPembayaranController::class, 'index'])->name('index');
+        Route::get('/create', [WaliPembayaranController::class, 'create'])->name('create');
+        Route::post('/', [WaliPembayaranController::class, 'store'])->name('store');
+        Route::get('/detail/{pembayaran}', [WaliPembayaranController::class, 'detail'])->name('detail');
+    });
     // route lain untuk wali murid
 });
 

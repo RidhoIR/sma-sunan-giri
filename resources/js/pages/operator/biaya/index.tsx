@@ -37,6 +37,7 @@ const Index = ({ biaya }: Props) => {
     const { data, setData, post, errors, processing } = useForm({
         nama: '',
         jumlah: '',
+        tahun_ajaran: '',
     });
 
     const formatRupiah = (value: string) => {
@@ -69,7 +70,7 @@ const Index = ({ biaya }: Props) => {
     };
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title='Data Wali Murid' />
+            <Head title='Data Biaya' />
             <div className='flex justify-between items-center mb-4'>
                 <div>
                     <h1 className='text-2xl font-bold capitalize'>Data Biaya</h1>
@@ -97,6 +98,16 @@ const Index = ({ biaya }: Props) => {
                                         required
                                     />
                                     {errors.nama && <p className="text-red-500">{errors.nama}</p>}
+                                </div>
+                                <div className="grid gap-3">
+                                    <Label htmlFor="sheet-demo-tahun_ajaran">Tahun Ajaran</Label>
+                                    <Input
+                                        id="sheet-demo-tahun_ajaran"
+                                        value={data.tahun_ajaran}
+                                        onChange={(e) => setData('tahun_ajaran', e.target.value)}
+                                        required
+                                    />
+                                    {errors.tahun_ajaran && <p className="text-red-500">{errors.tahun_ajaran}</p>}
                                 </div>
                                 <div className="grid gap-3">
                                     <Label htmlFor="jumlah">Jumlah<span className='text-red-600'>*</span></Label>

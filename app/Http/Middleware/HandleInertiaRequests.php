@@ -67,6 +67,9 @@ class HandleInertiaRequests extends Middleware
             'tagihans' => Tagihan::all(),
             'tagihan_details' => TagihanDetail::all(),
             'pembayarans' => Pembayaran::all(),
+            'bank_sekolahs' => \App\Models\BankSekolah::all(),
+            'banks' => \App\Models\Bank::all(),
+            'wali_banks' => \App\Models\WaliBank::all(),
         ];
     }
 }

@@ -2,12 +2,12 @@ import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
-import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/react';
+import { SharedData, type NavItem } from '@/types';
+import { Link, usePage } from '@inertiajs/react';
 import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
 import AppLogo from './app-logo';
 
-const mainNavItems: NavItem[] = [
+const adminNavItems: NavItem[] = [
     {
         title: 'Dashboard',
         href: '/admin/dashboard',
@@ -16,6 +16,11 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Data Users',
         href: '/admin/user',
+        icon: LayoutGrid,
+    },
+    {
+        title: 'Data Rekening Sekolah',
+        href: '/admin/rekening',
         icon: LayoutGrid,
     },
     {
@@ -37,7 +42,20 @@ const mainNavItems: NavItem[] = [
         title: 'Data Tagihan',
         href: '/admin/tagihan',
         icon: LayoutGrid
+    },
+    {
+        title: 'Data Pembayaran',
+        href: '/admin/pembayaran',
+        icon: LayoutGrid
     }
+];
+
+const waliNavItems: NavItem[] = [
+    { title: 'Dashboard', href: '/wali/dashboard', icon: LayoutGrid },
+    { title: 'Data Siswa', href: '/wali/siswa', icon: LayoutGrid },
+    { title: 'Data Tagihan', href: '/wali/tagihan', icon: LayoutGrid },
+    { title: 'Data Pembayaran', href: '/wali/pembayaran', icon: LayoutGrid },
+
 ];
 
 const footerNavItems: NavItem[] = [
@@ -54,6 +72,10 @@ const footerNavItems: NavItem[] = [
 ];
 
 export function AppSidebar() {
+    const {auth} = usePage<SharedData>().props;
+    const user = auth.user;
+
+    const mainNavItems = user?.akses === 'admin' ? adminNavItems : waliNavItems;
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>

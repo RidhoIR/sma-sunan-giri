@@ -72,7 +72,7 @@ export function DatePicker({
                 <PopoverTrigger asChild>
                     <Button
                         variant="outline"
-                        className="w-full justify-between font-normal bg-transparent"
+                        className="w-full justify-between font-normal bg-white"
                         aria-required={required}
                     >
                         {selectedDate ? selectedDate.toLocaleDateString("id-ID") : placeholder}

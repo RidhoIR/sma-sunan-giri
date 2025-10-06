@@ -34,6 +34,21 @@ export const column: ColumnDef<Biaya>[] = [
         cell: ({ row }) => <div className="capitalize">{row.getValue("nama")}</div>,
     },
     {
+        accessorKey: "tahun_ajaran",
+        header: ({ column }) => {
+            return (
+                <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                >
+                    Tahun Ajaran
+                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                </Button>
+            )
+        },
+        cell: ({ row }) => <div className="capitalize">{row.getValue("tahun_ajaran")}</div>,
+    },
+    {
         accessorKey: "jumlah",
         header: "Jumlah",
         cell: ({ row }) => (

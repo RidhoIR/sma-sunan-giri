@@ -39,6 +39,7 @@ export interface SharedData {
     tagihan_details: DetailTagihan[];
     biayas: Biaya[];
     pembayarans: Pembayaran[];
+    banks: Bank[];
 }
 
 export interface User {
@@ -71,14 +72,15 @@ export interface WaliSiswa {
     user: User;
 }
 
-export interface Biaya{
+export interface Biaya {
     id: number;
     nama: string;
     jumlah: number;
+    tahun_ajaran: string;
     user: User;
 }
 
-export interface Tagihan{
+export interface Tagihan {
     id: number;
     user: User;
     siswa: Siswa;
@@ -89,23 +91,63 @@ export interface Tagihan{
     keterangan: string;
     denda: number;
     status: string;
+    details: DetailTagihan[];
+    pembayarans: Pembayaran[];
+    latest_pembayaran: Pembayaran;
 }
 
-export interface DetailTagihan{
+export interface DetailTagihan {
+    id: number;
     tagihan: Tagihan;
     nama_biaya: string;
     jumlah_biaya: number;
 }
 
-export interface Pembayaran{
+export interface Pembayaran {
     id: number;
     tagihan: Tagihan;
     user: User;
+    wali: User;
+    wali_bank: WaliBank;
+    bank_sekolah: BankSekolah;
     jumlah_dibayar: number;
     metode_pembayaran: string;
     bukti_pembayaran: string;
     status_konfirmasi: string;
+    tanggal_konfirmasi: string;
     tanggal_pembayaran: string;
+}
+
+export interface BankSekolah {
+    id: number;
+    kode: string;
+    nama_bank: string;
+    nama_rekening: string;
+    nomor_rekening: string;
+}
+
+export interface Bank {
+    id: number;
+    code: string;
+    name: string;
+}
+
+export interface WaliBank {
+    id: number;
+    wali: User;
+    kode: string;
+    nama_bank: string;
+    nama_rekening: string;
+    nomor_rekening: string;
+}
+
+export type NotificationItem = {
+    id: string
+    title: string
+    description: string
+    time: string
+    read: boolean
+    url: string
 }
 
 

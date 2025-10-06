@@ -5,9 +5,12 @@ namespace App\Http\Controllers\Operator;
 use App\Http\Controllers\Controller;
 use App\Models\Pembayaran;
 use App\Models\Tagihan;
+use App\Models\User;
+use App\Notifications\PembayaranKonfirmasiNotification;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Inertia\Inertia;
 
 class PembayaranController extends Controller
 {
@@ -16,7 +19,21 @@ class PembayaranController extends Controller
      */
     public function index()
     {
-        //
+        $pembayaran = Pembayaran::with(
+            [
+                'tagihan',
+                'tagihan.siswa',
+                'tagihan.details',
+                'wali',
+                'user',
+                'waliBank',
+                'bankSekolah'
+            ]
+        )->get();
+
+        return Inertia::render('operator/pembayaran/index', [
+            'pembayaran' => $pembayaran
+        ]);
     }
 
     /**
@@ -48,13 +65,18 @@ class PembayaranController extends Controller
 
             $tagihan->save();
 
+            $waliId = $tagihan->siswa->waliSiswas->first()?->wali_id;
+
+
             Pembayaran::create([
                 'tagihan_id' => $validated['tagihan_id'],
                 'user_id' => Auth::user()->id,
-                'status_konfirmasi' => 'sudah',
+                // 'status_konfirmasi' => 'sudah',
+                'tanggal_konfirmasi' => now(),
                 'jumlah_dibayar' => $validated['jumlah_dibayar'],
                 'metode_pembayaran' => 'manual',
                 'tanggal_pembayaran' => $validated['tanggal_pembayaran'],
+                'wali_id' => $waliId,
             ]);
 
             return redirect()->back()->with('success', 'Pembayaran berhasil disimpan.');
@@ -73,7 +95,51 @@ class PembayaranController extends Controller
         return $pdf->stream('kwitansi-' . $pembayaran->id . '.pdf');
     }
 
-    
+    public function detail(Pembayaran $pembayaran)
+    {
+        $notification = auth()->user()->notifications()->where('data->pembayaran_id', $pembayaran->id)->first();
+
+        if ($notification) {
+            $notification->markAsRead();
+        }
+        $pembayaran->load([
+            'tagihan',
+            'tagihan.siswa', // kalau di Tagihan ada relasi siswa
+            'tagihan.details',
+            'wali',
+            'user',
+            'waliBank',
+            'bankSekolah',
+        ]);
+
+        return Inertia::render('operator/pembayaran/detail', [
+            'pembayaran' => $pembayaran
+        ]);
+    }
+
+    public function konfirmasi(Pembayaran $pembayaran)
+    {
+        try {
+            $pembayaran->update([
+                // 'status_konfirmasi' => 'sudah',
+                'tanggal_konfirmasi' => now(),
+            ]);
+
+            $pembayaran->tagihan->status = 'lunas';
+            $pembayaran->tagihan->save();
+
+            $waliId = $pembayaran->wali;
+
+            $waliId->notify(new PembayaranKonfirmasiNotification($pembayaran));
+
+            // $pembayaran->tagihan->siswa->notify(new PembayaranKonfirmasiNotification($pembayaran));
+            return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+
 
     /**
      * Display the specified resource.
@@ -104,6 +170,32 @@ class PembayaranController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+            $pembayaran = Pembayaran::findOrFail($id);
+
+            // simpan tagihan terkait
+            $tagihan = $pembayaran->tagihan;
+
+            // hapus pembayaran
+            $pembayaran->delete();
+
+            // cek ulang apakah tagihan masih ada pembayaran lain
+            $totalPembayaran = $tagihan->pembayarans()->sum('jumlah_dibayar');
+            $totalTagihan = $tagihan->details->sum('jumlah_biaya');
+
+            if ($totalPembayaran <= 0) {
+                $tagihan->status = 'baru';
+            } elseif ($totalPembayaran < $totalTagihan) {
+                $tagihan->status = 'angsur';
+            } else {
+                $tagihan->status = 'lunas';
+            }
+
+            $tagihan->save();
+
+            return redirect()->back()->with('success', 'Data pembayaran berhasil dihapus.');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }
