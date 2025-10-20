@@ -29,7 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })->withSchedule(function (Schedule $schedule) {
         // Jalankan command setiap hari jam 08:00
-        $schedule->command('reminder:tagihan')->dailyAt('13:30')->timezone('Asia/Jakarta');
+        $schedule->command('reminder:tagihan')->dailyAt('14:24')->timezone('Asia/Jakarta');
     })
 
     ->withExceptions(function (Exceptions $exceptions) {

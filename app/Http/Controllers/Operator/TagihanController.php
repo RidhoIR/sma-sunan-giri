@@ -128,11 +128,17 @@ class TagihanController extends Controller
         $tagihan_detail = $tagihan_details->first();
         $pembayaran = Pembayaran::with('tagihan')->where('tagihan_id', $id)->get();
 
+        $total_tagihan = $tagihan_details->sum('jumlah_biaya');
+        $totalDibayar = $tagihan_detail->tagihan->pembayarans->sum('jumlah_dibayar');
+        $sisaBayar = $total_tagihan - $totalDibayar;
+
 
         return Inertia::render('operator/tagihan/detail', [
             'tagihan_details' => $tagihan_details,
             'tagihan_detail'  => $tagihan_detail,
-            'pembayaran' => $pembayaran
+            'pembayaran' => $pembayaran,
+            'totalDibayar' => $totalDibayar,
+            'sisaBayar' => $sisaBayar,
         ]);
     }
 

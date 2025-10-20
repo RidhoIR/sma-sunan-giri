@@ -89,7 +89,7 @@ class PembayaranController extends Controller
 
     public function cetakInvoice($id)
     {
-        $pembayaran = Pembayaran::with(['tagihan.siswa'])->findOrFail($id);
+        $pembayaran = Pembayaran::with(['tagihan.siswa','user'])->findOrFail($id);
 
         $pdf = Pdf::loadView('invoice-pembayaran', compact('pembayaran'))
             ->setPaper('A5', 'portrait'); // ukuran A5 seperti kwitansi
@@ -124,6 +124,7 @@ class PembayaranController extends Controller
         try {
             $pembayaran->update([
                 // 'status_konfirmasi' => 'sudah',
+                'user_id' => Auth::user()->id,
                 'tanggal_konfirmasi' => now(),
             ]);
 

@@ -1,133 +1,121 @@
 // src/Components/columns.ts
 
-import { ColumnDef } from "@tanstack/react-table";
-import { Tagihan } from "@/types"; // Sesuaikan dengan tipe data Anda
-import { Button } from "@/components/ui/button"
-import { ArrowUpDown, File } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Tagihan } from '@/types'; // Sesuaikan dengan tipe data Anda
+import { ColumnDef } from '@tanstack/react-table';
+import { ArrowUpDown, File } from 'lucide-react';
 
-import { Link } from "@inertiajs/react";
-import { formatRupiah, formatTanggalIndonesiaLengkap } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-
-
+import { Badge } from '@/components/ui/badge';
+import { formatRupiah, formatTanggalIndonesiaLengkap } from '@/lib/utils';
+import { Link } from '@inertiajs/react';
 
 // Definisikan kolom tabel produk
 export const column = (tahun: string | number): ColumnDef<Tagihan>[] => [
     {
-        id: "no",
-        header: "No.",
+        id: 'no',
+        header: 'No.',
         cell: ({ row }) => row.index + 1,
         enableSorting: false,
         enableHiding: false,
     },
     {
-        accessorKey: "siswa.nama",
-        header: "Nama",
-        cell: ({ row }) => (
-            <div className="capitalize">{row.original.siswa.nama}</div>
-        ),
+        accessorKey: 'siswa.nama',
+        header: 'Nama',
+        cell: ({ row }) => <div className="capitalize">{row.original.siswa.nama}</div>,
     },
     {
-        accessorKey: "siswa.jurusan",
+        accessorKey: 'siswa.jurusan',
         header: ({ column }) => {
             return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
                     jurusan
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
-            )
+            );
         },
         cell: ({ row }) => <div className="uppercase">{row.original.siswa.jurusan}</div>,
     },
     {
-        accessorKey: "tanggal_tagihan",
+        accessorKey: 'kelas',
+        header: 'Kelas',
+        cell: ({ row }) => <div className="capitalize">{row.original.siswa.kelas}</div>,
+    },
+    {
+        accessorKey: 'tanggal_jatuh_tempo',
         header: ({ column }) => {
             return (
-                <Button
-                    variant="ghost"
-                    onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                >
-                    Tanggal Tagihan
+                <Button variant="ghost" onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}>
+                    Tgl. Jatuh Tempo    
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
-            )
+            );
         },
-        cell: ({ row }) => <div className="capitalize">{formatTanggalIndonesiaLengkap(row.getValue("tanggal_tagihan"))}</div>,
+        cell: ({ row }) => <div className="capitalize">{formatTanggalIndonesiaLengkap(row.getValue('tanggal_jatuh_tempo'))}</div>,
     },
+
     {
-        accessorKey: "kelas",
-        header: "Kelas",
-        cell: ({ row }) => (
-            <div className="capitalize">{row.original.siswa.kelas}</div>
-        ),
-    },
-    {
-        accessorKey: "status",
-        header: "Status Pembayaran",
+        accessorKey: 'status',
+        header: 'Status Pembayaran',
         cell: ({ row }) => {
             const status = row.original.status;
 
             const statusLabel: Record<string, string> = {
-                baru: "Belum dibayar",
-                lunas: "Sudah dibayar lunas",
-                angsur: "Belum lunas",
+                baru: 'Belum dibayar',
+                lunas: 'Sudah dibayar lunas',
+                angsur: 'Belum lunas',
             };
 
             const badgeColor: Record<string, string> = {
-                baru: "bg-blue-500/10 text-blue-700 border border-blue-500/30",
-                angsur: "bg-yellow-500/10 text-yellow-700 border border-yellow-500/30",
-                lunas: "bg-green-500/10 text-green-700 border border-green-500/30",
+                baru: 'bg-blue-500/10 text-blue-700 border border-blue-500/30',
+                angsur: 'bg-yellow-500/10 text-yellow-700 border border-yellow-500/30',
+                lunas: 'bg-green-500/10 text-green-700 border border-green-500/30',
             };
 
             return (
-                <Badge className={`capitalize px-3 py-1 rounded-md ${badgeColor[status] ?? "bg-gray-200 text-gray-700"}`}>
+                <Badge className={`rounded-md px-3 py-1 capitalize ${badgeColor[status] ?? 'bg-gray-200 text-gray-700'}`}>
                     {statusLabel[status] ?? status}
                 </Badge>
             );
         },
     },
     {
-        accessorKey: "totalDibayar",
-        header: "Total Dibayar",
-        cell: ({ row }) => (
-            <div className="capitalize text-blue-500">{formatRupiah(row.original.totalDibayar)}</div>
-        ),
+        accessorKey: 'totalDibayar',
+        header: 'Total Dibayar',
+        cell: ({ row }) => <div className="text-blue-500 capitalize">{formatRupiah(row.original.totalDibayar)}</div>,
     },
     {
-        accessorKey: "sisaBayar",
-        header: "Sisa Bayar",
-        cell: ({ row }) => (
-            <div className="capitalize text-red-500">{formatRupiah(row.original.sisaBayar)}</div>
-        ),
+        accessorKey: 'sisaBayar',
+        header: 'Sisa Bayar',
+        cell: ({ row }) => <div className="text-red-500 capitalize">{formatRupiah(row.original.sisaBayar)}</div>,
     },
     {
-        id: "actions",
+        id: 'actions',
         enableHiding: false,
         cell: ({ row }) => {
-            const tagihan = row.original
+            const tagihan = row.original;
 
             return (
-
-                <div className="flex gap-2 ">
+                <div className="flex gap-2">
                     {/* <Edit tagihan={tagihan} />
                     <Delete tagihan={tagihan} /> */}
-                    <Link href={route("admin.tagihan.show", tagihan.id)}>
-                        <Button variant={"blue"}>
-                            Detail
-                        </Button>
+                    <Link href={route('admin.tagihan.show', tagihan.id)}>
+                        <Button variant={'blue'}>Detail</Button>
                     </Link>
-                    <Button onClick={() => window.open(route('admin.tagihan.cetakSPP', {
-                        id: tagihan.siswa.id,
-                        tahun: tahun || new Date().getFullYear(),
-                    }), '_blank')}>
+                    <Button
+                        onClick={() =>
+                            window.open(
+                                route('admin.tagihan.cetakSPP', {
+                                    id: tagihan.siswa.id,
+                                    tahun: tahun || new Date().getFullYear(),
+                                }),
+                                '_blank',
+                            )
+                        }
+                    >
                         <File /> Kartu SPP
                     </Button>
                 </div>
-            )
+            );
         },
     },
-
 ];

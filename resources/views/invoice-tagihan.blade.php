@@ -61,6 +61,7 @@
 
         .no-border td {
             border: none;
+            /* border: 1px solid #000; */
         }
 
         .right {
@@ -96,18 +97,18 @@
     {{-- === INFORMASI TAGIHAN === --}}
     <table class="no-border">
         <tr>
-            <td><strong>Tagihan Untuk:</strong> {{ $tagihan_detail->tagihan->siswa->nama }}
+            <td><strong>Nama :</strong> {{ $tagihan_detail->tagihan->siswa->nama }}
                 ({{ $tagihan_detail->tagihan->siswa->nisn }})</td>
-            <td class="right"><strong>Invoice #:</strong> {{ $tagihan_detail->tagihan->id }}</td>
+            <td class="right"><strong>Invoice :</strong> #{{ $tagihan_detail->tagihan->id }}</td>
         </tr>
         <tr>
-            <td><strong>Kelas:</strong> {{ $tagihan_detail->tagihan->siswa->kelas }}</td>
-            <td class="right"><strong>Tgl. Tagihan:</strong>
+            <td><strong>Kelas :</strong> {{ $tagihan_detail->tagihan->siswa->kelas }}</td>
+            <td class="right"><strong>Tagihan :</strong>
                 {{ \Carbon\Carbon::parse($tagihan_detail->tagihan->tanggal_tagihan)->translatedFormat('d F Y') }}</td>
         </tr>
         <tr>
-            <td><strong>Jurusan:</strong> {{ $tagihan_detail->tagihan->siswa->jurusan }}</td>
-            <td class="right"><strong>Jatuh Tempo:</strong>
+            <td><strong>Jurusan :</strong> {{ $tagihan_detail->tagihan->siswa->jurusan }}</td>
+            <td class="right"><strong>Tenggat :</strong>
                 {{ \Carbon\Carbon::parse($tagihan_detail->tagihan->tanggal_jatuh_tempo)->translatedFormat('d F Y') }}
             </td>
         </tr>

@@ -1,5 +1,4 @@
-import AppLogoIcon from '@/components/app-logo-icon';
-import { Link } from '@inertiajs/react';
+import { Card } from '@/components/ui/card';
 import { type PropsWithChildren } from 'react';
 
 interface AuthLayoutProps {
@@ -10,23 +9,18 @@ interface AuthLayoutProps {
 
 export default function AuthSimpleLayout({ children, title, description }: PropsWithChildren<AuthLayoutProps>) {
     return (
-        <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
-            <div className="w-full max-w-sm">
+        <div className="flex h-[70vh] flex-col items-center justify-center gap-6 bg-gray-100 p-6 md:min-h-svh md:p-10">
+            <div className="w-full max-w-md">
                 <div className="flex flex-col gap-8">
-                    <div className="flex flex-col items-center gap-4">
-                        <Link href="" className="flex flex-col items-center gap-2 font-medium">
-                            <div className="mb-1 flex items-center justify-center rounded-md">
-                                <AppLogoIcon className="w-24 h-24 fill-current text-[var(--foreground)] dark:text-white" />
+                    <Card className='p-4'>
+                        <div className="flex flex-col items-center gap-4">
+                            <div className="space-y-2 text-center">
+                                <h1 className="text-xl font-medium">{title}</h1>
+                                <p className="text-center text-sm text-muted-foreground">{description}</p>
                             </div>
-                            <span className="sr-only">{title}</span>
-                        </Link>
-
-                        <div className="space-y-2 text-center">
-                            <h1 className="text-xl font-medium">{title}</h1>
-                            <p className="text-center text-sm text-muted-foreground">{description}</p>
                         </div>
-                    </div>
-                    {children}
+                        {children}
+                    </Card>
                 </div>
             </div>
         </div>
