@@ -102,6 +102,7 @@ Route::middleware(['auth', 'akses:wali'])->name('wali.')->group(function () {
     Route::prefix('/wali/tagihan')->name('tagihan.')->group(function () {
         Route::get('/', [WaliTagihanController::class, 'index'])->name('index');
         Route::get('/detail/{id}', [WaliTagihanController::class, 'show'])->name('show');
+        Route::get('/invoice/{id}', [WaliTagihanController::class, 'invoice'])->name('invoice');
     });
 
     Route::prefix('/wali/pembayaran')->name('pembayaran.')->group(function () {

@@ -1,7 +1,7 @@
 import { BankSekolah, BreadcrumbItem, DetailTagihan } from '@/types'
-import React, { useState } from 'react'
+import React from 'react'
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, useForm, } from '@inertiajs/react';
+import { Head, Link,} from '@inertiajs/react';
 import { Card } from '@/components/ui/card';
 import {
     Table,
@@ -27,9 +27,11 @@ interface Props {
     tagihan_details: DetailTagihan[];
     tagihan_detail: DetailTagihan;
     bank_sekolah: BankSekolah[];
+    totalDibayar: number;
+    sisaBayar: number;
 }
-const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah }: Props) => {
-    const [open, setOpen] = useState(false);
+const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah, totalDibayar, sisaBayar }: Props) => {
+    // const [open, setOpen] = useState(false);
 
     // const { data, setData, post, processing, } = useForm({
     //     siswa_id: '',
@@ -125,7 +127,7 @@ const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah }: Props) => {
                                     </TableRow>
                                     <TableRow>
                                         <TableCell>
-                                            <a href="" className='flex items-center '>
+                                            <a href={route('wali.tagihan.invoice', tagihan_detail.tagihan.id)} className='flex items-center '>
                                                 <Printer className='mr-2 text-blue-500 w-5 h-5' /> <span className='text-blue-500'>Cetak Invoice Tagihan</span>
                                             </a>
                                         </TableCell>
@@ -164,6 +166,15 @@ const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah }: Props) => {
                                 </TableRow>
                             )}
                         </TableBody>
+                        <TableFooter>
+                            <TableRow className="bg-red-100 font-semibold">
+                                <TableCell className="w-12"></TableCell>
+                                <TableCell className="font-bold text-red-500 capitalize text-center border-e">Sisa Belum Dibayar</TableCell>
+                                <TableCell className="font-bold text-red-500 text-end">
+                                    {formatRupiah(sisaBayar)}
+                                </TableCell>
+                            </TableRow>
+                        </TableFooter>
                         {tagihan_details.length > 0 && (
                             <TableFooter>
                                 <TableRow className="bg-gray-100 font-semibold">
@@ -175,13 +186,24 @@ const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah }: Props) => {
                                 </TableRow>
                             </TableFooter>
                         )}
+                        <TableFooter>
+                            <TableRow className="bg-green-100 font-semibold">
+                                <TableCell className="w-12"></TableCell>
+                                <TableCell className="font-bold text-green-700 capitalize text-center border-e">Total Dibayarkan</TableCell>
+                                <TableCell className="font-bold text-green-700 text-end">
+                                    {formatRupiah(totalDibayar)}
+                                </TableCell>
+                            </TableRow>
+                        </TableFooter>
+                        
                     </Table>
+                    
                     <div className='p-4 bg-gray-200'>
                         Pembayaran Bisa dilakukan dengan cara langsung ke Operator sekolah atau di trasnfer melalui rekening dibawah ini.<br />
                         <u><i> Jangan Melakukan transfer ke rekening selain dari rekening dibawah ini.</i></u> <br />
                         Setelah melakukan pembayaran, silahkan upload bukti pembayaran melalui tombol konfirmasi dibawah ini.
                     </div>
-                    <div className='grid md:grid-cols-2 gap-4 grid-rows-2'>
+                    <div className='grid md:grid-cols-2 grid-cols-1 gap-4'>
                         {bank_sekolah.map((item, index) => (
                             <div key={index} className='p-4 bg-violet-200 text-violet-700'>
                                 <table className='mb-4'>
@@ -200,12 +222,25 @@ const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah }: Props) => {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <Link href={route('wali.pembayaran.create', { tagihan_id: tagihan_detail.tagihan.id, bank_sekolah_id: item.id })}>
-                                    <Button variant="default">Konfirmasi Pembayaran</Button>
-                                </Link>
+                                {/* Kondisi tombol konfirmasi */}
+                                {tagihan_detail.tagihan.status !== "lunas" && (
+                                    <Link
+                                        href={route("wali.pembayaran.create", {
+                                            tagihan_id: tagihan_detail.tagihan.id,
+                                            bank_sekolah_id: item.id,
+                                        })}
+                                    >
+                                        <Button variant="default">Konfirmasi Pembayaran</Button>
+                                    </Link>
+                                )}
                             </div>
                         ))}
                     </div>
+                    {tagihan_detail.tagihan.status == "lunas" && (
+                        <p className="bg-green-100 text-green-700 px-4 py-2 rounded-lg shadow-md border border-green-300">
+                            ✅ Pembayaran ini sudah Lunas
+                        </p>
+                    )}
                 </Card>
             </div>
         </AppLayout >

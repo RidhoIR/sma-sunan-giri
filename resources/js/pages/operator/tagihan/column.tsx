@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { ArrowUpDown, File } from "lucide-react";
 
 import { Link } from "@inertiajs/react";
-import { formatTanggalIndonesiaLengkap } from "@/lib/utils";
+import { formatRupiah, formatTanggalIndonesiaLengkap } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 
 
@@ -60,29 +61,47 @@ export const column = (tahun: string | number): ColumnDef<Tagihan>[] => [
         accessorKey: "kelas",
         header: "Kelas",
         cell: ({ row }) => (
-            <div className="capitalize">{row.getValue("kelas")}</div>
+            <div className="capitalize">{row.original.siswa.kelas}</div>
         ),
     },
     {
         accessorKey: "status",
         header: "Status Pembayaran",
         cell: ({ row }) => {
-            const status = row.original.status; // value dari database
+            const status = row.original.status;
 
-            // mapping value
             const statusLabel: Record<string, string> = {
                 baru: "Belum dibayar",
-                lunas: "Sudah dibayar",
+                lunas: "Sudah dibayar lunas",
                 angsur: "Belum lunas",
             };
 
+            const badgeColor: Record<string, string> = {
+                baru: "bg-blue-500/10 text-blue-700 border border-blue-500/30",
+                angsur: "bg-yellow-500/10 text-yellow-700 border border-yellow-500/30",
+                lunas: "bg-green-500/10 text-green-700 border border-green-500/30",
+            };
+
             return (
-                <div className="capitalize">
+                <Badge className={`capitalize px-3 py-1 rounded-md ${badgeColor[status] ?? "bg-gray-200 text-gray-700"}`}>
                     {statusLabel[status] ?? status}
-                    {/* kalau value tak dikenal, tampilkan aslinya */}
-                </div>
+                </Badge>
             );
         },
+    },
+    {
+        accessorKey: "totalDibayar",
+        header: "Total Dibayar",
+        cell: ({ row }) => (
+            <div className="capitalize text-blue-500">{formatRupiah(row.original.totalDibayar)}</div>
+        ),
+    },
+    {
+        accessorKey: "sisaBayar",
+        header: "Sisa Bayar",
+        cell: ({ row }) => (
+            <div className="capitalize text-red-500">{formatRupiah(row.original.sisaBayar)}</div>
+        ),
     },
     {
         id: "actions",

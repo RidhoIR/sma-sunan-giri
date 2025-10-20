@@ -21,21 +21,35 @@ class TagihanController extends Controller
      */
     public function index(Request $request)
     {
+        // Ambil data tagihan dengan filter bulan dan tahun jika ada
+        $query = Tagihan::with(['siswa', 'user', 'pembayarans', 'details']);
+
         if ($request->filled('bulan') && $request->filled('tahun')) {
-            $tagihan = Tagihan::with('siswa', 'user')
-                ->whereMonth('tanggal_tagihan', $request->bulan)
-                ->whereYear('tanggal_tagihan', $request->tahun)->get();
-        } else {
-            $tagihan = Tagihan::with('siswa', 'user')->get();
+            $query->whereMonth('tanggal_tagihan', $request->bulan)
+                ->whereYear('tanggal_tagihan', $request->tahun);
         }
+
+        $tagihan = $query->get();
+
+        // Tambahkan atribut total_dibayar dan sisa_tagihan untuk tiap tagihan
+        $tagihan = $tagihan->map(function ($item) {
+            $totalTagihan = $item->details->sum('jumlah_biaya');
+            $totalDibayar = $item->pembayarans->sum('jumlah_dibayar');
+            $sisaTagihan  = max($totalTagihan - $totalDibayar, 0); // biar nggak minus
+
+            $item->totalDibayar = $totalDibayar;
+            $item->sisaBayar = $sisaTagihan;
+            return $item;
+        });
 
         $biaya = Biaya::get();
 
         return Inertia::render('operator/tagihan/index', [
             'tagihan' => $tagihan,
-            'biaya' => $biaya
+            'biaya' => $biaya,
         ]);
     }
+
 
     /**
      * Show the form for creating a new resource.

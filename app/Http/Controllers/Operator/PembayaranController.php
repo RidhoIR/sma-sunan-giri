@@ -11,6 +11,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PembayaranController extends Controller
 {
@@ -125,12 +127,45 @@ class PembayaranController extends Controller
                 'tanggal_konfirmasi' => now(),
             ]);
 
-            $pembayaran->tagihan->status = 'lunas';
+            // Hitung total biaya tagihan
+            $totalBiaya = $pembayaran->tagihan->details->sum('jumlah_biaya');
+
+            // Hitung total seluruh pembayaran yang sudah dikonfirmasi untuk tagihan ini
+            $totalDibayar = $pembayaran->tagihan->pembayarans()
+                ->sum('jumlah_dibayar');
+
+            // Tentukan status tagihan
+            if ($totalDibayar < $totalBiaya) {
+                $pembayaran->tagihan->status = 'angsur';
+            } elseif ($totalDibayar >= $totalBiaya) {
+                $pembayaran->tagihan->status = 'lunas';
+            }
+
+            // $pembayaran->tagihan->status = 'lunas';
             $pembayaran->tagihan->save();
 
             $waliId = $pembayaran->wali;
 
             $waliId->notify(new PembayaranKonfirmasiNotification($pembayaran));
+
+            foreach ($pembayaran->tagihan->siswa->waliSiswas as $waliSiswa) {
+                $wali = $waliSiswa->wali;
+                if (!$wali || !$wali->no_hp) continue;
+
+                $message = "📢 *Konfirmasi Pembayaran*\n\n"
+                    . "Halo {$wali->name}, pembayaran untuk siswa *{$pembayaran->tagihan->siswa->nama}* "
+                    . "tahun ajaran {$pembayaran->tagihan->tahun_ajaran} telah DIKONFIRMASI oleh admin. ✅\n\n"
+                    . "Terima kasih telah melakukan pembayaran. 🙏";
+
+                $response = Http::withHeaders([
+                    'Authorization' => env('FONNTE_TOKEN'),
+                ])->post('https://api.fonnte.com/send', [
+                    'target' => $wali->no_hp,
+                    'message' => $message,
+                ]);
+
+                Log::info("Kirim pesan konfirmasi ke {$wali->no_hp}: " . $response->body());
+            }
 
             // $pembayaran->tagihan->siswa->notify(new PembayaranKonfirmasiNotification($pembayaran));
             return redirect()->back()->with('success', 'Pembayaran berhasil dikonfirmasi.');

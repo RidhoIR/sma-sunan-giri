@@ -94,6 +94,8 @@ export interface Tagihan {
     details: DetailTagihan[];
     pembayarans: Pembayaran[];
     latest_pembayaran: Pembayaran;
+    totalDibayar: number;
+    sisaBayar: number;
 }
 
 export interface DetailTagihan {
