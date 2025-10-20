@@ -1,28 +1,13 @@
-import { BreadcrumbItem, Pembayaran } from '@/types'
-import AppLayout from '@/layouts/app-layout';
-import { Head, useForm } from '@inertiajs/react';
-import { Card } from '@/components/ui/card';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
-import { formatRupiah, formatTanggalIndonesiaJam, formatTanggalIndonesiaLengkap, } from '@/lib/utils';
-import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { InfoIcon } from 'lucide-react';
-
+import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/app-layout';
+import { formatRupiah, formatTanggalIndonesiaJam, formatTanggalIndonesiaLengkap } from '@/lib/utils';
+import { BreadcrumbItem, Pembayaran } from '@/types';
+import { Head, Link } from '@inertiajs/react';
+import { InfoIcon, Printer } from 'lucide-react';
+import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -35,11 +20,6 @@ interface Props {
     pembayaran: Pembayaran;
 }
 const Detail = ({ pembayaran }: Props) => {
-
-
-    const { put, reset, } = useForm({
-        tanggal_konfirmasi: '',
-    });
     const [openBukti, setOpenBukti] = useState(false);
 
     // const [date, setDate] = useState<Date | null>(null);
@@ -47,14 +27,6 @@ const Detail = ({ pembayaran }: Props) => {
     //     setDate(date);
     //     setData('tanggal_pembayaran', date ? date.toISOString().split('T')[0] : '');
     // }
-
-    const updateKonfirmasi = (id: number) => {
-        put(route("admin.pembayaran.konfirmasi", id), {
-            onSuccess: () => reset(),
-        });
-    }
-
-
 
     // const handleJumlahChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //     const value = e.target.value.replace(/\D/g, '');
@@ -74,20 +46,20 @@ const Detail = ({ pembayaran }: Props) => {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={'Pembayaran ' + pembayaran.tagihan.siswa.nama} />
-            <div className='min-h-screen bg-gradient-to-br from-slate-50 to-slate-100'>
-                <div className='flex justify-between items-center mb-4'>
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+                <div className="mb-4 flex items-center justify-between">
                     <div>
-                        <h1 className='text-2xl font-bold'>Detail Pembayaran {pembayaran.tagihan.siswa.nama}</h1>
-                        <h2 className='text-sm text-muted-foreground'>Informasi lengkap detail pembayaran</h2>
+                        <h1 className="text-2xl font-bold">Detail Pembayaran {pembayaran.tagihan.siswa.nama}</h1>
+                        <h2 className="text-sm text-muted-foreground">Informasi lengkap detail pembayaran</h2>
                     </div>
                 </div>
-                <Card className="bg-white shadow-sm p-4 mb-4">
-                    <div className=''>
-                        <h2 className="uppercase text-lg font-semibold text-white bg-gray-600 p-2">informasi tagihan</h2>
-                        <Table className='md:w-full'>
+                <Card className="mb-4 bg-white p-4 shadow-sm">
+                    <div className="">
+                        <h2 className="bg-gray-600 p-2 text-lg font-semibold text-white uppercase">informasi tagihan</h2>
+                        <Table className="md:w-full">
                             <TableBody>
-                                <TableRow >
-                                    <TableCell className="font-medium text-gray-900 w-40">No</TableCell>
+                                <TableRow>
+                                    <TableCell className="w-40 font-medium text-gray-900">No</TableCell>
                                     <TableCell className="text-gray-900">: {pembayaran.id}</TableCell>
                                 </TableRow>
                                 <TableRow>
@@ -97,10 +69,10 @@ const Detail = ({ pembayaran }: Props) => {
                                 <TableRow>
                                     <TableCell className="font-medium text-gray-900">Item Tagihan</TableCell>
                                     <TableCell className="text-gray-900">
-                                        <Table className="table-auto w-full">
+                                        <Table className="w-full table-auto">
                                             <TableHeader>
                                                 <TableRow>
-                                                    <TableHead className='w-24'>No</TableHead>
+                                                    <TableHead className="w-24">No</TableHead>
                                                     <TableHead className="">Nama Biaya</TableHead>
                                                     <TableHead className="">Jumlah</TableHead>
                                                 </TableRow>
@@ -109,7 +81,7 @@ const Detail = ({ pembayaran }: Props) => {
                                                 {/* Ganti dengan sumber data detail item Anda */}
                                                 {pembayaran.tagihan.details?.map((item, index) => (
                                                     <TableRow key={item.id}>
-                                                        <TableCell className='w-24'>{index + 1}</TableCell>
+                                                        <TableCell className="w-24">{index + 1}</TableCell>
                                                         <TableCell className="">{item.nama_biaya}</TableCell>
                                                         <TableCell className="">{formatRupiah(item.jumlah_biaya)}</TableCell>
                                                     </TableRow>
@@ -119,9 +91,13 @@ const Detail = ({ pembayaran }: Props) => {
                                                 <TableFooter>
                                                     <TableRow className="bg-gray-100 font-semibold">
                                                         <TableCell className="w-12"></TableCell>
-                                                        <TableCell className="font-bold text-gray-900 capitalize text-center">Total Tagihan</TableCell>
+                                                        <TableCell className="text-center font-bold text-gray-900 capitalize">
+                                                            Total Tagihan
+                                                        </TableCell>
                                                         <TableCell className="font-bold text-gray-900">
-                                                            {formatRupiah(pembayaran.tagihan.details.reduce((total, item) => total + item.jumlah_biaya, 0))}
+                                                            {formatRupiah(
+                                                                pembayaran.tagihan.details.reduce((total, item) => total + item.jumlah_biaya, 0),
+                                                            )}
                                                         </TableCell>
                                                     </TableRow>
                                                 </TableFooter>
@@ -131,18 +107,19 @@ const Detail = ({ pembayaran }: Props) => {
                                 </TableRow>
                                 <TableRow>
                                     <TableCell className="font-medium text-gray-900">Total Tagihan</TableCell>
-                                    <TableCell className="text-gray-900">: {formatRupiah(pembayaran.tagihan.details.reduce((total, item) => total + item.jumlah_biaya, 0))}
+                                    <TableCell className="text-gray-900">
+                                        : {formatRupiah(pembayaran.tagihan.details.reduce((total, item) => total + item.jumlah_biaya, 0))}
                                     </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
                     </div>
-                    <div className=''>
-                        <h2 className="uppercase text-lg font-semibold text-white bg-gray-600 p-2">informasi siswa</h2>
-                        <Table className='md:w-full'>
+                    <div className="">
+                        <h2 className="bg-gray-600 p-2 text-lg font-semibold text-white uppercase">informasi siswa</h2>
+                        <Table className="md:w-full">
                             <TableBody>
                                 <TableRow>
-                                    <TableCell className="font-medium text-gray-900 w-40">Nama Siswa</TableCell>
+                                    <TableCell className="w-40 font-medium text-gray-900">Nama Siswa</TableCell>
                                     <TableCell className="text-gray-900">: {pembayaran.tagihan.siswa.nama}</TableCell>
                                 </TableRow>
                                 <TableRow>
@@ -154,29 +131,21 @@ const Detail = ({ pembayaran }: Props) => {
                     </div>
                     {/* Informasi bank pengirim */}
                     {pembayaran.metode_pembayaran === 'transfer' && (
-                        <div className=''>
-                            <h2 className="uppercase text-lg font-semibold text-white bg-gray-600 p-2">
-                                informasi bank pengirim
-                            </h2>
-                            <Table className='md:w-full'>
+                        <div className="">
+                            <h2 className="bg-gray-600 p-2 text-lg font-semibold text-white uppercase">informasi bank pengirim</h2>
+                            <Table className="md:w-full">
                                 <TableBody>
                                     <TableRow>
-                                        <TableCell className="font-medium text-gray-900 w-40">Bank Pengirim</TableCell>
-                                        <TableCell className="text-gray-900">
-                                            : {pembayaran.wali_bank?.nama_bank ?? '-'}
-                                        </TableCell>
+                                        <TableCell className="w-40 font-medium text-gray-900">Bank Pengirim</TableCell>
+                                        <TableCell className="text-gray-900">: {pembayaran.wali_bank?.nama_bank ?? '-'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium text-gray-900">Nomor Rekening</TableCell>
-                                        <TableCell className="text-gray-900">
-                                            : {pembayaran.wali_bank?.nomor_rekening ?? '-'}
-                                        </TableCell>
+                                        <TableCell className="text-gray-900">: {pembayaran.wali_bank?.nomor_rekening ?? '-'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium text-gray-900">Pemilik Rekening</TableCell>
-                                        <TableCell className="text-gray-900 capitalize">
-                                            : {pembayaran.wali_bank?.nama_rekening ?? '-'}
-                                        </TableCell>
+                                        <TableCell className="text-gray-900 capitalize">: {pembayaran.wali_bank?.nama_rekening ?? '-'}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
@@ -184,40 +153,32 @@ const Detail = ({ pembayaran }: Props) => {
                     )}
                     {/* Informasi bank tujuan */}
                     {pembayaran.metode_pembayaran === 'transfer' && (
-                        <div className=''>
-                            <h2 className="uppercase text-lg font-semibold text-white bg-gray-600 p-2">
-                                informasi bank tujuan
-                            </h2>
-                            <Table className='md:w-full'>
+                        <div className="">
+                            <h2 className="bg-gray-600 p-2 text-lg font-semibold text-white uppercase">informasi bank tujuan</h2>
+                            <Table className="md:w-full">
                                 <TableBody>
                                     <TableRow>
-                                        <TableCell className="font-medium text-gray-900 w-40">Bank Tujuan Transfer</TableCell>
-                                        <TableCell className="text-gray-900">
-                                            : {pembayaran.bank_sekolah?.nama_bank ?? '-'}
-                                        </TableCell>
+                                        <TableCell className="w-40 font-medium text-gray-900">Bank Tujuan Transfer</TableCell>
+                                        <TableCell className="text-gray-900">: {pembayaran.bank_sekolah?.nama_bank ?? '-'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium text-gray-900">Nomor Rekening</TableCell>
-                                        <TableCell className="text-gray-900">
-                                            : {pembayaran.bank_sekolah?.nomor_rekening ?? '-'}
-                                        </TableCell>
+                                        <TableCell className="text-gray-900">: {pembayaran.bank_sekolah?.nomor_rekening ?? '-'}</TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium text-gray-900">Atas Nama</TableCell>
-                                        <TableCell className="text-gray-900 capitalize">
-                                            : {pembayaran.bank_sekolah?.nama_rekening ?? '-'}
-                                        </TableCell>
+                                        <TableCell className="text-gray-900 capitalize">: {pembayaran.bank_sekolah?.nama_rekening ?? '-'}</TableCell>
                                     </TableRow>
                                 </TableBody>
                             </Table>
                         </div>
                     )}
-                    <div className=''>
-                        <h2 className="uppercase text-lg font-semibold text-white bg-gray-600 p-2">informasi pembayaran</h2>
-                        <Table className='md:w-full'>
+                    <div className="">
+                        <h2 className="bg-gray-600 p-2 text-lg font-semibold text-white uppercase">informasi pembayaran</h2>
+                        <Table className="md:w-full">
                             <TableBody>
                                 <TableRow>
-                                    <TableCell className="font-medium text-gray-900 capitalize w-40">Metode Pembayaran</TableCell>
+                                    <TableCell className="w-40 font-medium text-gray-900 capitalize">Metode Pembayaran</TableCell>
                                     <TableCell className="text-gray-900">: {pembayaran.metode_pembayaran}</TableCell>
                                 </TableRow>
                                 <TableRow>
@@ -226,7 +187,9 @@ const Detail = ({ pembayaran }: Props) => {
                                 </TableRow>
                                 <TableRow>
                                     <TableCell className="font-medium text-gray-900">Jumlah Total Tagihan</TableCell>
-                                    <TableCell className="text-gray-900 capitalize">: {formatRupiah(pembayaran.tagihan.details.reduce((total, item) => total + item.jumlah_biaya, 0))}</TableCell>
+                                    <TableCell className="text-gray-900 capitalize">
+                                        : {formatRupiah(pembayaran.tagihan.details.reduce((total, item) => total + item.jumlah_biaya, 0))}
+                                    </TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell className="font-medium text-gray-900">Jumlah Yang Dibayar</TableCell>
@@ -234,10 +197,11 @@ const Detail = ({ pembayaran }: Props) => {
                                 </TableRow>
                                 <TableRow>
                                     <TableCell className="font-medium text-gray-900">Bukti Pembayaran</TableCell>
-                                    <TableCell className="text-gray-900 capitalize">:
+                                    <TableCell className="text-gray-900 capitalize">
+                                        :
                                         <Dialog open={openBukti} onOpenChange={setOpenBukti}>
                                             <DialogTrigger asChild>
-                                                <Button variant="link" className="p-0 h-auto text-blue-600 underline">
+                                                <Button variant="link" className="h-auto p-0 text-blue-600 underline">
                                                     Lihat Bukti Pembayaran
                                                 </Button>
                                             </DialogTrigger>
@@ -248,7 +212,7 @@ const Detail = ({ pembayaran }: Props) => {
                                                 <img
                                                     src={`/storage/${pembayaran.bukti_pembayaran}`}
                                                     alt="Bukti Pembayaran"
-                                                    className="w-full h-auto rounded-md object-contain max-h-[80vh]"
+                                                    className="h-auto max-h-[80vh] w-full rounded-md object-contain"
                                                 />
                                             </DialogContent>
                                         </Dialog>
@@ -265,26 +229,39 @@ const Detail = ({ pembayaran }: Props) => {
                                 </TableRow>
                                 <TableRow>
                                     <TableCell className="font-medium text-gray-900">Tanggal Konfirmasi</TableCell>
-                                    <TableCell className="text-gray-900 capitalize">: {pembayaran.tanggal_konfirmasi
-                                        ? formatTanggalIndonesiaJam(pembayaran.tanggal_konfirmasi)
-                                        : '-'}</TableCell>
+                                    <TableCell className="text-gray-900 capitalize">
+                                        : {pembayaran.tanggal_konfirmasi ? formatTanggalIndonesiaJam(pembayaran.tanggal_konfirmasi) : '-'}
+                                    </TableCell>
                                 </TableRow>
                             </TableBody>
                         </Table>
                     </div>
                     {pembayaran.tanggal_konfirmasi ? (
-                        <p className="bg-green-100 text-green-700 px-4 py-2 rounded-lg shadow-md border border-green-300">
-                            ✅ Pembayaran ini sudah dikonfirmasi !!!
-                        </p>
+                        <div>
+                            <p className="rounded-lg border border-green-300 bg-green-100 px-4 py-2 text-green-700 shadow-md">
+                                ✅ Pembayaran ini sudah dikonfirmasi !!!
+                            </p>
+                            <Link
+                                href={route('wali.pembayaran.cetakInvoice', pembayaran.id)}
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    window.open(route('wali.pembayaran.cetakInvoice', pembayaran.id));
+                                }}
+                            >
+                                <Button className="mt-4">
+                                    <Printer className="mr-2 h-4 w-4" /> Download Kwitansi Pembayaran
+                                </Button>
+                            </Link>
+                        </div>
                     ) : (
-                        <p className="flex gap-2 bg-yellow-100 text-yellow-700 px-4 py-2 rounded-lg shadow-md border border-yellow-300">
-                            <InfoIcon/> Pembayaran akan segera di konfirmasi oleh admin
+                        <p className="flex gap-2 rounded-lg border border-yellow-300 bg-yellow-100 px-4 py-2 text-yellow-700 shadow-md">
+                            <InfoIcon /> Pembayaran akan segera di konfirmasi oleh admin
                         </p>
                     )}
                 </Card>
             </div>
-        </AppLayout >
-    )
-}
+        </AppLayout>
+    );
+};
 
-export default Detail
+export default Detail;

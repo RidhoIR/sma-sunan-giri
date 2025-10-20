@@ -110,6 +110,8 @@ Route::middleware(['auth', 'akses:wali'])->name('wali.')->group(function () {
         Route::get('/create', [WaliPembayaranController::class, 'create'])->name('create');
         Route::post('/', [WaliPembayaranController::class, 'store'])->name('store');
         Route::get('/detail/{pembayaran}', [WaliPembayaranController::class, 'detail'])->name('detail');
+        Route::get('/cetak-invoice/{id}', [WaliPembayaranController::class, 'cetakInvoice'])->name('cetakInvoice');
+
     });
     // route lain untuk wali murid
 });

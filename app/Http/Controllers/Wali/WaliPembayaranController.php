@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Pembayaran;
 use App\Models\User;
 use App\Notifications\PembayaranNotification;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class WaliPembayaranController extends Controller
 {
@@ -22,10 +23,10 @@ class WaliPembayaranController extends Controller
     public function index()
     {
         $pembayaran = Pembayaran::where('wali_id', Auth::user()->id)
-        ->with(['tagihan', 'tagihan.siswa', 'wali', 'user', 'bankSekolah'])
-        ->latest()
-        ->orderBy('tanggal_pembayaran', 'desc')
-        ->get();        
+            ->with(['tagihan', 'tagihan.siswa', 'wali', 'user', 'bankSekolah'])
+            ->latest()
+            ->orderBy('tanggal_pembayaran', 'desc')
+            ->get();
 
         return Inertia::render('wali/pembayaran/index', [
             'pembayaran' => $pembayaran
@@ -157,6 +158,47 @@ class WaliPembayaranController extends Controller
         return Inertia::render('wali/pembayaran/detail', [
             'pembayaran' => $pembayaran
         ]);
+    }
+
+    public function cetakInvoice($id)
+    {
+        $pembayaran = Pembayaran::with(['tagihan.siswa', 'user'])->findOrFail($id);
+        $terbilang = $this->terbilang($pembayaran->jumlah_dibayar) . " Rupiah";
+
+        $pdf = Pdf::loadView('invoice-pembayaran', compact('pembayaran', 'terbilang'))
+            ->setPaper('A5', 'portrait'); // ukuran A5 seperti kwitansi
+
+        return $pdf->stream('kwitansi-' . $pembayaran->id . '.pdf');
+    }
+
+    private function terbilang($angka)
+    {
+        $angka = abs($angka);
+        $huruf = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+        $temp = "";
+
+        if ($angka < 12) {
+            $temp = " " . $huruf[$angka];
+        } else if ($angka < 20) {
+            $temp = $this->terbilang($angka - 10) . " Belas";
+        } else if ($angka < 100) {
+            $temp = $this->terbilang($angka / 10) . " Puluh" . $this->terbilang($angka % 10);
+        } else if ($angka < 200) {
+            $temp = " Seratus" . $this->terbilang($angka - 100);
+        } else if ($angka < 1000) {
+            $temp = $this->terbilang($angka / 100) . " Ratus" . $this->terbilang($angka % 100);
+        } else if ($angka < 2000) {
+            $temp = " Seribu" . $this->terbilang($angka - 1000);
+        } else if ($angka < 1000000) {
+            $temp = $this->terbilang($angka / 1000) . " Ribu" . $this->terbilang($angka % 1000);
+        } else if ($angka < 1000000000) {
+            $temp = $this->terbilang($angka / 1000000) . " Juta" . $this->terbilang(fmod($angka, 1000000));
+        } else {
+            $temp = "Angka terlalu besar";
+        }
+
+        // tambahkan kata 'Rupiah' di akhir hasil
+        return trim($temp);
     }
 
     /**

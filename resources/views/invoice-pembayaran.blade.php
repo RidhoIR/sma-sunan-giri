@@ -17,7 +17,9 @@
 
         .header {
             margin-bottom: 20px;
+            width: 100%;
         }
+
 
         .table {
             width: 100%;
@@ -49,16 +51,21 @@
     <div class="header">
         <table>
             <tr>
-                <td>Nama Siswa</td>
-                <td>: {{ $pembayaran->tagihan->siswa->nama }}</td>
-            </tr>
-            <tr>
-                <td>Tanggal Tagihan</td>
-                <td>: {{ \Carbon\Carbon::parse($pembayaran->tagihan->tanggal_tagihan)->translatedFormat('d F Y') }}</td>
-            </tr>
-            <tr>
                 <td>Pembayaran ID</td>
                 <td>: {{ '#SSG-' . $pembayaran->id ?? '' }}</td>
+            </tr>
+            <tr>
+                <td>Telah Terima Dari</td>
+                <td>: {{ $pembayaran->wali->name }}</td>
+            </tr>
+            <tr>
+                <td>Uang Sejumlah</td>
+                <td style="font-style: italic">: {{ $terbilang }}</td>
+            </tr>
+            <tr>
+                <td>Untuk Pembayaran</td>
+                <td>: Tagihan Bulan
+                    {{ \Carbon\Carbon::parse($pembayaran->tagihan->tanggal_tagihan)->translatedFormat('F') }}</td>
             </tr>
         </table>
     </div>
@@ -84,7 +91,7 @@
     <div class="right">
         <p>Gresik, {{ \Carbon\Carbon::parse($pembayaran->tanggal_pembayaran)->translatedFormat('d F Y') }}</p>
         <br><br>
-        <p>Operator {{$pembayaran->user->name}}</p>
+        <p>Operator {{ $pembayaran->user->name }}</p>
     </div>
 </body>
 
