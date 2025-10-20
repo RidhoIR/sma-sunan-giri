@@ -114,6 +114,7 @@ Route::middleware(['auth', 'akses:wali'])->name('wali.')->group(function () {
 
     });
     // route lain untuk wali murid
+    //ini adalah contoh
 });
 
 
