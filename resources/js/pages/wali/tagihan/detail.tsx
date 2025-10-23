@@ -21,9 +21,8 @@ interface Props {
     bank_sekolah: BankSekolah[];
     totalDibayar: number;
     sisaBayar: number;
-    tagihan_id: number;
 }
-const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah, totalDibayar, sisaBayar, tagihan_id }: Props) => {
+const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah, totalDibayar, sisaBayar }: Props) => {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
