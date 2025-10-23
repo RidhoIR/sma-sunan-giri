@@ -32,7 +32,7 @@ export interface SharedData {
     flash: {
         success: string;
         error: string;
-    }
+    };
     siswas: Siswa[];
     wali_siswas: WaliSiswa[];
     tagihans: Tagihan[];
@@ -144,12 +144,12 @@ export interface WaliBank {
 }
 
 export type NotificationItem = {
-    id: string
-    title: string
-    description: string
-    time: string
-    read: boolean
-    url: string
-}
+    id: string;
+    title: string;
+    description: string;
+    time: string;
+    read: boolean;
+    url: string;
+};
 
 

@@ -8,6 +8,7 @@ use App\Http\Controllers\Operator\SiswaController;
 use App\Http\Controllers\Operator\TagihanController;
 use App\Http\Controllers\Operator\UserController;
 use App\Http\Controllers\Operator\WaliController;
+use App\Http\Controllers\Wali\PaymentGatewayController;
 use App\Http\Controllers\Wali\SiswaController as WaliSiswaController;
 use App\Http\Controllers\Wali\WaliPembayaranController;
 use App\Http\Controllers\Wali\WaliTagihanController;
@@ -95,6 +96,12 @@ Route::middleware(['auth', 'akses:admin'])->name('admin.')->group(function () {
 Route::middleware(['auth', 'akses:wali'])->name('wali.')->group(function () {
     Route::get('/wali/dashboard', [WaliDashboardController::class, 'index'])->name('dashboard');
 
+    Route::prefix('/wali/payment')->name('payment.')->group(function () {
+        Route::post('/token', [PaymentGatewayController::class, 'createSnapToken'])->name('token');
+        Route::post('/callback', [PaymentGatewayController::class, 'callback'])->name('callback');
+    });
+
+
     Route::prefix('/wali/siswa')->name('siswa.')->group(function () {
         Route::get('/', [WaliSiswaController::class, 'index'])->name('index');
     });
@@ -111,10 +118,9 @@ Route::middleware(['auth', 'akses:wali'])->name('wali.')->group(function () {
         Route::post('/', [WaliPembayaranController::class, 'store'])->name('store');
         Route::get('/detail/{pembayaran}', [WaliPembayaranController::class, 'detail'])->name('detail');
         Route::get('/cetak-invoice/{id}', [WaliPembayaranController::class, 'cetakInvoice'])->name('cetakInvoice');
-
     });
     // route lain untuk wali murid
-    
+
 });
 
 
