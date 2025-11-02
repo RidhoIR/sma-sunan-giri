@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pembayaran;
+use App\Models\Siswa;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class AdminDashboardController extends Controller
@@ -12,7 +15,11 @@ class AdminDashboardController extends Controller
      */
     public function index()
     {
-        return Inertia::render('dashboard'); 
+        $totalSiswa = Siswa::count();
+        $totalPembayaran = Pembayaran::count();
+        $jumlahPembayaran = Pembayaran::sum('jumlah_dibayar'); 
+        $unreadNotifications = Auth::user()->unreadNotifications()->count();
+        return Inertia::render('dashboard' , compact('totalSiswa', 'totalPembayaran', 'jumlahPembayaran', 'unreadNotifications')); 
     }
 
     /**
