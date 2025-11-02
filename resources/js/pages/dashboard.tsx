@@ -21,7 +21,7 @@ interface Props {
     unreadNotifications: number;
 }
 
-export default function Dashboard({ totalPembayaran, totalSiswa, jumlahPembayaran, unreadNotifications }: Props) {
+export default function Dashboard({ totalSiswa, jumlahPembayaran, unreadNotifications }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />

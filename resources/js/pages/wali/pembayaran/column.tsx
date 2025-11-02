@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowUpDown, Eye } from "lucide-react";
 import { Link } from "@inertiajs/react";
 // import Edit from "./edit";
-import Delete from "./delete";
+// import Delete from "./delete";
 
 
 
