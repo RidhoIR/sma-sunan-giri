@@ -92,6 +92,9 @@
     --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
     --sidebar-border: oklch(0.92 0.004 286.32);
     --sidebar-ring: oklch(0.606 0.25 292.717);
+    --chart-lunas: #10B981;        /* Emerald-500 */
+    --chart-belum-lunas: #F59E0B;  /* Amber-500 */
+    --chart-belum-bayar: #EF4444;   
 }
 
 .dark {

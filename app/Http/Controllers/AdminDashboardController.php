@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Pembayaran;
 use App\Models\Siswa;
+use App\Models\Tagihan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -17,9 +18,31 @@ class AdminDashboardController extends Controller
     {
         $totalSiswa = Siswa::count();
         $totalPembayaran = Pembayaran::count();
-        $jumlahPembayaran = Pembayaran::sum('jumlah_dibayar'); 
+        $jumlahPembayaran = Pembayaran::sum('jumlah_dibayar');
         $unreadNotifications = Auth::user()->unreadNotifications()->count();
-        return Inertia::render('dashboard' , compact('totalSiswa', 'totalPembayaran', 'jumlahPembayaran', 'unreadNotifications')); 
+        $lunas = Tagihan::where('status', 'lunas')->count();
+        $belum_lunas = Tagihan::where('status', 'angsur')->count();
+        $belum_bayar = Tagihan::where('status', 'baru')->count();
+        $sudah_dikonfirmasi = Pembayaran::where('tanggal_konfirmasi', '!=', null)->count();
+        $belum_dikonfirmasi = Pembayaran::where('tanggal_konfirmasi', null)->count();
+        return Inertia::render(
+            'dashboard',
+            [
+                'totalSiswa' => $totalSiswa,
+                'totalPembayaran' => $totalPembayaran,
+                'jumlahPembayaran' => $jumlahPembayaran,
+                'unreadNotifications' => $unreadNotifications,
+                'tagihanStats' => [
+                    'lunas' => $lunas,
+                    'belum_lunas' => $belum_lunas,
+                    'belum_bayar' => $belum_bayar,
+                ],
+                'pembayaranStats' => [
+                    'sudah_dikonfirmasi' => $sudah_dikonfirmasi,
+                    'belum_dikonfirmasi' => $belum_dikonfirmasi,
+                ],
+            ],
+        );
     }
 
     /**

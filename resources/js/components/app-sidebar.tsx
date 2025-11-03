@@ -47,6 +47,11 @@ const adminNavItems: NavItem[] = [
         title: 'Data Pembayaran',
         href: '/admin/pembayaran',
         icon: LayoutGrid
+    },
+    {
+        title: 'Laporan',
+        href: '/admin/laporan',
+        icon: LayoutGrid
     }
 ];
 

@@ -1,4 +1,6 @@
 // import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+import KonfirmasiChart from '@/components/konfirmasi-chart';
+import TagihanPie from '@/components/tagihan-bar-chart';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
@@ -19,9 +21,12 @@ interface Props {
     totalSiswa: number;
     jumlahPembayaran: number;
     unreadNotifications: number;
+    tagihanStats: { lunas: number; belum_lunas: number; belum_bayar: number }; // data chart
+    pembayaranStats: { sudah_dikonfirmasi: number; belum_dikonfirmasi: number };
 }
 
-export default function Dashboard({ totalSiswa, jumlahPembayaran, unreadNotifications }: Props) {
+export default function Dashboard({ totalSiswa, jumlahPembayaran, unreadNotifications, tagihanStats, pembayaranStats }: Props) {
+    console.log(totalSiswa);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
@@ -106,6 +111,14 @@ export default function Dashboard({ totalSiswa, jumlahPembayaran, unreadNotifica
                         </div>
                     </CardContent>
                 </Card>
+            </div>
+            <div className="grid grid-cols-2 gap-6">
+                <div>
+                    <TagihanPie title="Status Tagihan Siswa" data={tagihanStats} />
+                </div>
+                <div>
+                    <KonfirmasiChart title="Status Konfirmasi Pembayaran" data={pembayaranStats} />
+                </div>
             </div>
         </AppLayout>
     );
