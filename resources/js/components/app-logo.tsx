@@ -1,3 +1,4 @@
+
 import AppLogoIcon from './app-logo-icon';
 
 export default function AppLogo() {
@@ -9,8 +10,9 @@ export default function AppLogo() {
             </div>
             <div className="ml-1 grid flex-1 text-left text-lg">
                 <span className="mb-0.5 truncate leading-tight font-bold uppercase">
-                    spp online
+                    Pembayaran 
                 </span>
+                <span className="truncate leading-tight font-bold uppercase">Online</span>
             </div>
         </>
     );

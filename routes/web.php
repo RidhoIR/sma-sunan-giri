@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\Operator\BankSekolahController;
 use App\Http\Controllers\Operator\BiayaController;
+use App\Http\Controllers\Operator\LaporanController as OperatorLaporanController;
 use App\Http\Controllers\Operator\PembayaranController;
 use App\Http\Controllers\Operator\SiswaController;
 use App\Http\Controllers\Operator\TagihanController;
@@ -88,6 +89,12 @@ Route::middleware(['auth', 'akses:admin'])->name('admin.')->group(function () {
         Route::post('/', [BankSekolahController::class, 'store'])->name('store');
         Route::put('/{id}', [BankSekolahController::class, 'update'])->name('update');
         Route::delete('/{id}', [BankSekolahController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('/admin/laporan')->name('laporan.')->group(function () {
+        Route::get('/', [OperatorLaporanController::class,  'index'])->name('index');
+        Route::get('/tagihan/pdf', [OperatorLaporanController::class, 'generateLaporanTagihan'])->name('generateLaporanTagihan');
+        Route::get('/pembayaran/pdf', [OperatorLaporanController::class, 'generateLaporanPembayaran'])->name('generateLaporanPembayaran');
     });
     // route lain untuk operator
 });

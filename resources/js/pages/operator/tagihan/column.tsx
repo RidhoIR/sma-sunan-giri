@@ -3,14 +3,14 @@
 import { Button } from '@/components/ui/button';
 import { Tagihan } from '@/types'; // Sesuaikan dengan tipe data Anda
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowUpDown, File } from 'lucide-react';
+import { ArrowUpDown} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import { formatRupiah, formatTanggalIndonesiaLengkap } from '@/lib/utils';
 import { Link } from '@inertiajs/react';
 
 // Definisikan kolom tabel produk
-export const column = (tahun: string | number): ColumnDef<Tagihan>[] => [
+export const column: ColumnDef<Tagihan>[] = [
     {
         id: 'no',
         header: 'No.',
@@ -101,7 +101,7 @@ export const column = (tahun: string | number): ColumnDef<Tagihan>[] => [
                     <Link href={route('admin.tagihan.show', tagihan.id)}>
                         <Button variant={'blue'}>Detail</Button>
                     </Link>
-                    <Button
+                    {/* <Button
                         onClick={() =>
                             window.open(
                                 route('admin.tagihan.cetakSPP', {
@@ -113,7 +113,7 @@ export const column = (tahun: string | number): ColumnDef<Tagihan>[] => [
                         }
                     >
                         <File /> Kartu SPP
-                    </Button>
+                    </Button> */}
                 </div>
             );
         },

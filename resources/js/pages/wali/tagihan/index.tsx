@@ -1,29 +1,12 @@
 import { DataTable } from '@/components/DataTable';
 import { BreadcrumbItem, Tagihan } from '@/types'
-import React, { useState } from 'react'
+
 import { column } from './column';
 import AppLayout from '@/layouts/app-layout';
-import { Head, router, useForm, } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
+import { Head, } from '@inertiajs/react';
+
 import { Card } from '@/components/ui/card';
-import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet"
-import { Loader2 } from 'lucide-react';
-import { formatRupiah } from '@/lib/utils';
-import { MultiSelect, type Option } from "@/components/multi-select"
-// import { Input } from '@/components/ui/input';
-import { Label } from "@/components/ui/label"
-import { Textarea } from '@/components/ui/textarea';
-import { DatePicker } from '@/components/date-picker';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

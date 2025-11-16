@@ -72,8 +72,7 @@ const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah, totalDibayar, s
                                 gross_amount: result.gross_amount,
                             }),
                         });
-
-                        router.reload();
+                        router.reload();    
                     },
                     onPending: (result) => {
                         alert('Menunggu pembayaran...');

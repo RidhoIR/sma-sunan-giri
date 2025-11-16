@@ -18,7 +18,7 @@ class AdminDashboardController extends Controller
     {
         $totalSiswa = Siswa::count();
         $totalPembayaran = Pembayaran::count();
-        $jumlahPembayaran = Pembayaran::sum('jumlah_dibayar');
+        $jumlahPembayaran = Pembayaran::where('tanggal_konfirmasi', '!=', null)->sum('jumlah_dibayar');
         $unreadNotifications = Auth::user()->unreadNotifications()->count();
         $lunas = Tagihan::where('status', 'lunas')->count();
         $belum_lunas = Tagihan::where('status', 'angsur')->count();

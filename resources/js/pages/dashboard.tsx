@@ -38,7 +38,7 @@ export default function Dashboard({ totalSiswa, jumlahPembayaran, unreadNotifica
                     </div>
                     <div className="relative">
                         <h1 className="mb-2 text-4xl font-bold">Selamat Datang Kembali 👋</h1>
-                        <p className="text-lg opacity-90">Kelola data pembayaran SPP dengan mudah dan efisien</p>
+                        <p className="text-lg opacity-90">Kelola data pembayaran online dengan mudah dan efisien</p>
                     </div>
                 </div>
             </div>
@@ -81,7 +81,7 @@ export default function Dashboard({ totalSiswa, jumlahPembayaran, unreadNotifica
                     <CardContent className="relative p-6">
                         <div className="flex items-start justify-between">
                             <div className="flex-1">
-                                <p className="mb-1 text-sm font-medium text-muted-foreground">Total Pembayaran</p>
+                                <p className="mb-1 text-sm font-medium text-muted-foreground">Total Pembayaran Dikonfirmasi</p>
                                 <p className="truncate text-2xl font-bold text-foreground">{formatRupiah(jumlahPembayaran ?? 0)}</p>
                                 <p className="mt-2 text-xs text-muted-foreground">Selama ini</p>
                             </div>

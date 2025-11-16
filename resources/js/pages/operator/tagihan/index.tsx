@@ -243,7 +243,7 @@ const Index = ({ tagihan, filters, biaya }: Props) => {
                 </Sheet>
             </div>
             <Card className='p-4'>
-                <DataTable data={tagihan} columns={column(tahun)} />
+                <DataTable data={tagihan} columns={column} />
             </Card>
         </AppLayout >
     )

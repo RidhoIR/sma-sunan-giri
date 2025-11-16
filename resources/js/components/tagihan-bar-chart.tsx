@@ -15,7 +15,7 @@ export default function TagihanPie({ title, data }: { title: string; data: Tagih
     ];
 
     return (
-        <Card className="flex flex-col">
+        <Card className="flex flex-col">    
             <CardHeader className="items-center pb-0">
                 <CardTitle>{title}</CardTitle>
             </CardHeader>

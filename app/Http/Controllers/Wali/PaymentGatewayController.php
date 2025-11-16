@@ -24,8 +24,13 @@ class PaymentGatewayController extends Controller
             // Ambil data tagihan
             $tagihan = Tagihan::with(['siswa', 'details'])->findOrFail($request->tagihan_id);
 
+            $totalTagihan = $tagihan->details->sum('jumlah_biaya');
+            $totalDibayar = $tagihan->pembayarans->sum('jumlah_dibayar');
+            $sisaBayar = $totalTagihan - $totalDibayar;
+
+
             // Hitung total
-            $grossAmount = $tagihan->details->sum('jumlah_biaya');
+            $grossAmount = $sisaBayar;
 
             if ($grossAmount <= 0) {
                 return response()->json(['error' => 'Jumlah tagihan tidak valid'], 400);
@@ -48,15 +53,16 @@ class PaymentGatewayController extends Controller
                     'email' => $tagihan->siswa->email ?? 'noemail@example.com',
                     'phone' => $tagihan->siswa->no_telp ?? '081234567890',
                 ],
-                'item_details' => $tagihan->details->map(function ($detail) {
-                    return [
-                        'id' => $detail->id,
-                        'price' => (int) $detail->jumlah_biaya,
+                // PERBAIKAN: Kirim Sisa Bayar sebagai SATU item
+                'item_details' => [
+                    [
+                        'id' => 'SISA-' . $tagihan->id,
+                        'price' => (int) $grossAmount, // HARGA item adalah SISA BAYAR
                         'quantity' => 1,
-                        'name' => $detail->nama_biaya,
-                    ];
-                })->toArray(),
-            ];
+                        'name' => 'Pembayaran Sisa Tagihan #' . $tagihan->id,
+                    ]
+                ],
+            ];  
 
             Log::info('Creating Snap Token', ['params' => $params]);
 
@@ -109,19 +115,19 @@ class PaymentGatewayController extends Controller
 
                 try {
                     Pembayaran::create([
-                    'wali_id' => Auth::user()->id,
-                    'tagihan_id' => $tagihan->id,
-                    'jumlah_dibayar' => $gross,
-                    'tanggal_konfirmasi' => now(),
-                    'tanggal_pembayaran' => now(),
-                    'metode_pembayaran' => 'midtrans',
-                ]);
+                        'wali_id' => Auth::user()->id,
+                        'tagihan_id' => $tagihan->id,
+                        'jumlah_dibayar' => $gross,
+                        'tanggal_konfirmasi' => now(),
+                        'tanggal_pembayaran' => now(),
+                        'metode_pembayaran' => 'midtrans',
+                    ]);
                 } catch (\Exception $e) {
                     Log::error('Error creating pembayaran', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
                     return response()->json(['message' => 'Error creating pembayaran'], 500);
                 }
                 // Buat record pembayaran baru
-                
+
             }
 
             return response()->json(['message' => 'Callback processed']);

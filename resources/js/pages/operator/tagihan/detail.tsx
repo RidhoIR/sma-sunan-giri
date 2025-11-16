@@ -8,7 +8,7 @@ import AppLayout from '@/layouts/app-layout';
 import { formatRupiah, formatTanggalIndonesia, formatTanggalIndonesiaLengkap, InputformatRupiah } from '@/lib/utils';
 import { BreadcrumbItem, DetailTagihan, Pembayaran } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { File, Loader2, Printer, UserIcon } from 'lucide-react';
+import { Loader2, Printer, UserIcon } from 'lucide-react';
 import { useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -83,7 +83,7 @@ const Detail = ({ tagihan_detail, tagihan_details, pembayaran, totalDibayar, sis
                             <UserIcon />
                             <h1 className="text-xl font-bold capitalize">Informasi Personal</h1>
                         </div>
-                        <div>
+                        {/* <div>
                             <Link
                                 href={route('admin.tagihan.cetakSPP', tagihan_detail.tagihan.siswa.id)}
                                 onClick={() => window.open(route('admin.tagihan.cetakSPP', tagihan_detail.tagihan.siswa.id), '_blank')}
@@ -93,7 +93,7 @@ const Detail = ({ tagihan_detail, tagihan_details, pembayaran, totalDibayar, sis
                                     Kartu SPP
                                 </Button>
                             </Link>
-                        </div>
+                        </div> */}
                     </div>
                     <div className="mb-4 flex items-center gap-4">
                         <div>
