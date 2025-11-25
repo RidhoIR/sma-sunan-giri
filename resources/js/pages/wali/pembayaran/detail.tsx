@@ -179,7 +179,7 @@ const Detail = ({ pembayaran }: Props) => {
                             <TableBody>
                                 <TableRow>
                                     <TableCell className="w-40 font-medium text-gray-900 capitalize">Metode Pembayaran</TableCell>
-                                    <TableCell className="text-gray-900">: {pembayaran.metode_pembayaran}</TableCell>
+                                    <TableCell className="text-gray-900 capitalize font-bold">: {pembayaran.metode_pembayaran}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell className="font-medium text-gray-900">Tanggal Pembayaran</TableCell>

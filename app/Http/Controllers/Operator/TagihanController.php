@@ -23,7 +23,7 @@ class TagihanController extends Controller
     {
         // Ambil data tagihan dengan filter bulan dan tahun jika ada
         $query = Tagihan::with(['siswa', 'user', 'pembayarans', 'details']);
-
+        $kelas = Siswa::select('kelas')->distinct()->get();
         if ($request->filled('bulan') && $request->filled('tahun')) {
             $query->whereMonth('tanggal_tagihan', $request->bulan)
                 ->whereYear('tanggal_tagihan', $request->tahun);
@@ -47,6 +47,7 @@ class TagihanController extends Controller
         return Inertia::render('operator/tagihan/index', [
             'tagihan' => $tagihan,
             'biaya' => $biaya,
+            'kelas' => $kelas,
         ]);
     }
 
@@ -79,7 +80,22 @@ class TagihanController extends Controller
 
             DB::transaction(function () use ($request) {
                 // Ambil semua siswa
-                $siswas = Siswa::all();
+                $siswasQuery = Siswa::query();
+
+                if ($request->kelas) {
+                    $siswasQuery->where('kelas', $request->kelas);
+                }
+
+                if ($request->angkatan) {
+                    $siswasQuery->where('angkatan', $request->angkatan);
+                }
+
+                $siswas = $siswasQuery->get();
+
+                if ($siswas->isEmpty()) {
+                    throw new \Exception("Tidak ada siswa pada kelas atau angkatan yang dipilih.");
+                }
+
 
                 // Ambil semua biaya yang dipilih
                 $biayas = Biaya::whereIn('id', $request->biaya_id)->get();

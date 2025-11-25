@@ -25,21 +25,42 @@ interface Props {
 const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah, totalDibayar, sisaBayar }: Props) => {
     const [loading, setLoading] = useState(false);
 
-    useEffect(() => {
-        // Muat Snap.js hanya sekali
-        const snapScript = document.createElement('script');
-        snapScript.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
-        snapScript.setAttribute('data-client-key', import.meta.env.VITE_MIDTRANS_CLIENT_KEY);
-        document.body.appendChild(snapScript);
+    const [snapReady, setSnapReady] = useState(false);
 
-        return () => {
-            document.body.removeChild(snapScript);
-        };
+    useEffect(() => {
+        if (!document.getElementById('snap-midtrans')) {
+            const snapScript = document.createElement('script');
+            snapScript.id = 'snap-midtrans';
+            snapScript.src = 'https://app.sandbox.midtrans.com/snap/snap.js';
+            snapScript.setAttribute('data-client-key', import.meta.env.VITE_MIDTRANS_CLIENT_KEY);
+
+            // Tambahkan event listener untuk memastikan script sudah load
+            snapScript.onload = () => {
+                console.log('Snap script loaded successfully');
+                setSnapReady(true);
+            };
+
+            snapScript.onerror = () => {
+                console.error('Failed to load Snap script');
+            };
+
+            document.body.appendChild(snapScript);
+        } else {
+            // Script sudah ada
+            setSnapReady(true);
+        }
     }, []);
 
     const handleBayar = async () => {
         try {
             setLoading(true);
+
+            // 🔥 CEK INI DULU
+            console.log('=== DEBUG START ===');
+            console.log('Tagihan ID:', tagihan_detail.tagihan.id);
+            console.log('Route URL:', route('wali.payment.token', tagihan_detail.tagihan.id));
+            console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.getAttribute('content'));
+            console.log('Window.snap exists:', !!window.snap);
 
             const response = await fetch(route('wali.payment.token', tagihan_detail.tagihan.id), {
                 method: 'POST',
@@ -47,18 +68,43 @@ const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah, totalDibayar, s
                     'Content-Type': 'application/json',
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
                 },
-                credentials: 'include', // 🔥 ini penting
+                credentials: 'include',
                 body: JSON.stringify({ tagihan_id: tagihan_detail.tagihan.id }),
             });
 
-            const data = await response.json();
+            console.log('Response status:', response.status);
+            console.log('Response OK:', response.ok);
+
+            // 🔥 CEK RAW RESPONSE
+            const rawText = await response.text();
+            console.log('Raw response:', rawText);
+
+            let data;
+            try {
+                data = JSON.parse(rawText);
+                console.log('Parsed data:', data);
+            } catch (e) {
+                console.error('Failed to parse JSON:', e);
+                alert('Response bukan JSON valid: ' + rawText);
+                return;
+            }
+
             const snapToken = data.snapToken;
 
-            if (window.snap && snapToken) {
+            if (!snapToken) {
+                console.error('❌ Snap token missing!');
+                alert('Token tidak ditemukan dalam response');
+                return;
+            }
+
+            console.log('✅ Snap token received:', snapToken);
+
+            if (window.snap) {
+                console.log('✅ Opening Snap popup...');
                 window.snap.pay(snapToken, {
                     onSuccess: async (result) => {
+                        console.log('Payment success:', result);
                         alert('Pembayaran berhasil!');
-                        console.log(result);
 
                         await fetch(route('wali.payment.callback'), {
                             method: 'POST',
@@ -72,25 +118,28 @@ const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah, totalDibayar, s
                                 gross_amount: result.gross_amount,
                             }),
                         });
-                        router.reload();    
+                        router.reload();
                     },
                     onPending: (result) => {
+                        console.log('Payment pending:', result);
                         alert('Menunggu pembayaran...');
-                        console.log(result);
                     },
                     onError: (result) => {
+                        console.error('Payment error:', result);
                         alert('Pembayaran gagal!');
-                        console.error(result);
                     },
                     onClose: () => {
+                        console.log('Payment popup closed');
                         alert('Kamu menutup popup tanpa menyelesaikan pembayaran');
                     },
                 });
             } else {
-                console.error('Snap belum siap atau token tidak ditemukan.');
+                console.error('❌ Window.snap not available!');
+                alert('Snap belum siap. Coba refresh halaman.');
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error('❌ Error in handleBayar:', error);
+            alert('Terjadi kesalahan: ' + error.message);
         } finally {
             setLoading(false);
         }
@@ -236,11 +285,13 @@ const Detail = ({ tagihan_details, tagihan_detail, bank_sekolah, totalDibayar, s
                     </Table>
                     <div className="bg-gray-200 p-4">
                         <h1 className="font-semibold">Pembayaran Otomatis</h1>
-                        <p className="mt-2">pembayaran otomatis pihak ketiga, anda akan dikenakan biaya tambahan (biaya admin) sebesar {formatRupiah(4000)}</p>
+                        <p className="mt-2">
+                            pembayaran otomatis pihak ketiga, anda akan dikenakan biaya tambahan (biaya admin) sebesar {formatRupiah(4000)}
+                        </p>
                         {tagihan_detail.tagihan.status !== 'lunas' && (
                             <div className="mt-2">
-                                <Button onClick={handleBayar} disabled={loading}>
-                                    {loading ? 'Memproses...' : 'Bayar Sekarang'}
+                                <Button onClick={handleBayar} disabled={loading || !snapReady || tagihan_detail.tagihan.status === 'lunas'}>
+                                    {loading ? 'Memproses...' : !snapReady ? 'Loading...' : 'Bayar Sekarang'}
                                 </Button>
                             </div>
                         )}
