@@ -1,20 +1,12 @@
-import { Bank, BankSekolah, BreadcrumbItem, DetailTagihan, Tagihan, WaliBank } from '@/types'
+import { Bank, BankSekolah, BreadcrumbItem, Tagihan, WaliBank } from '@/types'
 import React, { useState } from 'react'
 import AppLayout from '@/layouts/app-layout';
-import { Head, Link, useForm, } from '@inertiajs/react';
+import { Head,  useForm, } from '@inertiajs/react';
 import { Card } from '@/components/ui/card';
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableFooter,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
 
-import { formatRupiah, formatTanggalIndonesiaLengkap } from '@/lib/utils';
+
 import { Button } from '@/components/ui/button';
-import { BadgeInfoIcon, Info, InfoIcon, Loader2, Printer } from 'lucide-react';
+import { InfoIcon, Loader2, } from 'lucide-react';
 import { DatePicker } from '@/components/date-picker';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -35,7 +27,6 @@ interface Props {
     wali_bank: WaliBank[];
 }
 const Payment = ({ tagihan, bank_sekolah, list_bank, banks, wali_bank }: Props) => {
-    const [open, setOpen] = useState(false);
     const [addNewBank, setAddNewBank] = useState(false); // <-- toggle add new bank
     const today = new Date().toISOString().split('T')[0];
 

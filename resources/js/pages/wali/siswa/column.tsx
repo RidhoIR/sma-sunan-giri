@@ -1,7 +1,7 @@
 // src/Components/columns.ts
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Siswa, WaliSiswa, } from "@/types";
+import { WaliSiswa, } from "@/types";
 import { Button } from "@/components/ui/button"
 import { ArrowUpDown } from "lucide-react";
 // import Edit from "./edit";
